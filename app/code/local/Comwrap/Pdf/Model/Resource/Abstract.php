@@ -36,6 +36,7 @@ abstract class Comwrap_Pdf_Model_Resource_Abstract extends Mage_Core_Model_Abstr
 	{
 		//$this->_pdf = new mPDF('P', 'A4', '','', 30, 14, 14, 117);
 		$_pdf = new mPDF('P', 'A4', '','', 5, 10, 5, 5);
+		$_pdf->SetAutoFont();
 		$this->setPdf($_pdf);
 		return $this;
 	}
