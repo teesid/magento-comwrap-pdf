@@ -23,9 +23,7 @@
  *
  * @var $this Comwrap_Pdf_Block_Invoice
  */
-$imageUrl = Mage::getStoreConfig('design/header/logo_src');
-# Just don't show the logo for now.
-$imageUrl = '';
+$logoUrl = Mage::getStoreConfig('design/header/logo_src');
 
 $i = 0;
 ?>
@@ -123,20 +121,14 @@ $i = 0;
 
     ?>
 
-    <?php if($imageUrl): ?>
-    <div>
-        <div style="float: left; padding-bottom: 3mm"><img width="2.6in" src="<?php echo $image?>" /></div>
-    </div>
-    <?php endif;?>
-
-    <table class="no-border" style="margin-bottom: 10pt;">
+    <table class="no-border" style="margin-bottom: 1cm;">
         <tr>
-            <td>
+            <td style="width: 50%; height: 3cm; overflow: hidden;">
                 <?php if ($need_receipt) {
                     echo $this->getLayout()->createBlock('cms/block')->setBlockId('store_billing_contact')->toHtml(); 
                 } ?>
             </td>
-            <td style="text-align: right; vertical-align: top;">
+            <td style="width: 50%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
                 <?php if ($need_receipt): ?>
                     <h1><?php echo $this->__('Bill')?></h1><br />
                 <?php endif; ?>
@@ -148,7 +140,7 @@ $i = 0;
 
     <table class="no-border">
         <tr>
-            <td style="text-align: right; width: 13%; overflow: hidden;">
+            <td style="text-align: right; width: 13%; height: 3cm; overflow: hidden;">
                 <div style="position: absolute; rotate: -90; left: 10%; text-align: center; font-size: 70%;">
                     <?php echo $this->__('Order # ')?>
                     <br />
@@ -157,7 +149,7 @@ $i = 0;
                     <?php echo $_invoice->getOrder()->getIncrementId()?>
                 </div>
             </td>
-            <td style="text-align: center; width: 2%;">
+            <td style="text-align: center; width: 2%; height: 3cm; overflow: hidden;">
                 S<br />
                 H<br />
                 I<br />
@@ -166,10 +158,10 @@ $i = 0;
                 T<br />
                 O<br />
             </td>
-            <td style="padding: 5pt; text-align: left; width: 45%; position: relative;">
+            <td style="padding: 5pt; text-align: left; width: 55%; height: 3cm; overflow: hidden;">
                 <p class="address-info"><?php echo $_invoice->getShippingAddress()->format('html');?></p>
             </td>
-            <td style="text-align: center; width: 5%">
+            <td style="text-align: center; width: 5%; height: 3cm; overflow: hidden;">
                 S<br />
                 O<br />
                 L<br />
@@ -178,14 +170,12 @@ $i = 0;
                 T<br />
                 O<br />
             </td>
-            <td style="padding: 5pt; text-align: left; width: 35%">
+            <td style="padding: 5pt; text-align: left; width: 25%; height: 3cm; overflow: hidden;">
                 <p class="address-info"><?php echo $_invoice->getBillingAddress()->format('html');?></p>
             </td>
         </tr>
     </table>
-    <br/>
-    <br/>
-    <table class="no-border products" cellpadding="0" cellspacing="0">
+    <table class="no-border products" cellpadding="0" cellspacing="0" style="margin-top: 1.5cm;">
         <thead>
         <tr class="products-head">
             <td style="border-right: 0;"><?php echo $this->__('Products'); ?></td>
