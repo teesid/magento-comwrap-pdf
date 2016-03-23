@@ -53,7 +53,6 @@ class Comwrap_Pdf
 
 	public function render()
 	{
-xdebug_break();
         $lastPage = 0;
         foreach ($this->pages as $p) {
             if ($lastPage)
