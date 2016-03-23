@@ -8,3 +8,5 @@ app/design/frontend/base/default/layout/comwrap/pdf.xml            app/design/fr
 app/design/frontend/base/default/template/comwrap/pdf/creditmemo.phtml            app/design/frontend/base/default/template/comwrap/pdf/creditmemo.phtml
 app/design/frontend/base/default/template/comwrap/pdf/invoice.phtml            app/design/frontend/base/default/template/comwrap/pdf/invoice.phtml
 app/design/frontend/base/default/template/comwrap/pdf/shipment.phtml            app/design/frontend/base/default/template/comwrap/pdf/shipment.phtml
+# lib
+lib/Comwrap/Pdf.php            lib/Comwrap/Pdf.php

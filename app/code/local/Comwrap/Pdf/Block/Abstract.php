@@ -38,12 +38,7 @@ abstract class Comwrap_Pdf_Block_Abstract extends Mage_Core_Block_Template
 	{
 		$this->setScriptPath(Mage::getBaseDir('design'));
 
-		$html = $this->fetchView($this->getTemplateFile());
-
-		/* @var $_pdf Comwrap_Pdf_Model_Resource_Abstract */
-		$_pdf = Mage::getModel('comwrap_pdf/resource_' . $this->getPdfType());
-
-		return $_pdf->render($html);
+		return $this->fetchView($this->getTemplateFile());
 	}
 
 

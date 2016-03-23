@@ -2,7 +2,6 @@
 require_once(Mage::getModuleDir('', 'Comwrap_Pdf') . '/lib/MPDF56/mpdf.php');
 
 /**
- * Class Comwrap_Pdf_Model_Resource_Pdf
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,34 +17,50 @@ require_once(Mage::getModuleDir('', 'Comwrap_Pdf') . '/lib/MPDF56/mpdf.php');
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * @license GPL 2.0
- * @package Comwrap/Pdf/Model
- * @author Thomas Spigel <tspigel@comwrap.com>
- * @version 1.0
  *
- * @method mPDF getPdf()
- * @method Comwrap_Pdf_Model_Resource_Pdf setPdf(mPDF $pdf)
+ * @license GPL 2.0
+ * @package Comwrap/Pdf
+ * @author Teesid Korsrilabutr <teesid@gmail.com>
+ * @version 1.0
  */
-abstract class Comwrap_Pdf_Model_Resource_Abstract extends Mage_Core_Model_Abstract
+
+/* An mPDF wrapper that provides the minimal subset of properties and methods
+ * of Zend_Pdf so that it can work as a drop-in replacement in Magento.
+ * Tested with Magento CE 1.9.2.3.
+ */
+class Comwrap_Pdf
 {
+    /*
+     * @var array   - array of Comwrap_Pdf_Block_Abstract object
+     */
+    public $pages = array();
+
+    /**
+     * @var mPDF
+     */
+    protected $_pdf;
 
 	/**
 	 * @return $this
 	 */
-	public function _construct()
+	public function __construct()
 	{
-		//$this->_pdf = new mPDF('P', 'A4', '','', 30, 14, 14, 117);
-		$_pdf = new mPDF('P', 'A4', '','', 5, 10, 5, 5);
-		$_pdf->SetAutoFont();
-		$this->setPdf($_pdf);
+		$this->_pdf = new mPDF('P', 'A4', '','', 5, 10, 5, 5);
+		$this->_pdf->SetAutoFont();
 		return $this;
 	}
 
 
-	public function render($html)
+	public function render()
 	{
-		$this->getPdf()->writeHTML($html);
-		return $this->getPdf()->Output('', 'S');
+xdebug_break();
+        $lastPage = 0;
+        foreach ($this->pages as $p) {
+            if ($lastPage)
+                $this->_pdf->AddPage();
+		    $this->_pdf->writeHTML($p->render());
+            $lastPage++;
+        }
+		return $this->_pdf->Output('', 'S');
 	}
-
 }
