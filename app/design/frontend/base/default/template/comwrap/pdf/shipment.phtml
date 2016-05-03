@@ -70,6 +70,10 @@ $i = 0;
             padding: 5pt;
         }
 
+        .addresses td {
+            vertical-align: top;
+        }
+
         .products td {
             padding: 3pt;
             height: 5pt;
@@ -114,17 +118,16 @@ $i = 0;
     $_date = new Zend_Date($_shipment->getOrder()->getCreatedAt());
     ?>
 
-    <?php if($imageUrl): ?>
-    <div>
-        <div style="float: left; padding-bottom: 3mm"><img width="2.6in" src="<?php echo $image?>" /></div>
-    </div>
-    <?php endif;?>
-
-    <table class="no-border" style="margin-bottom: 10pt;">
+    <table class="no-border" style="margin-bottom: 1cm;">
         <tr>
-            <td>
+            <td style="width: 50%; height: 3cm; overflow: hidden;">
+                <?php if($imageUrl): ?>
+                <div>
+                    <div style="float: left; padding-bottom: 3mm"><img width="2.6in" src="<?php echo $image?>" /></div>
+                </div>
+                <?php endif;?>
             </td>
-            <td style="text-align: right; vertical-align: top;">
+            <td style="width: 50%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
                 <h1><?php echo $this->__('Packing Slip')?></h1><br />
                 <?php echo $this->__('Order Date: ')?>
                 <?php echo $_date->get(Mage::app()->getLocale()->getDateFormat('medium'));?>
@@ -132,7 +135,7 @@ $i = 0;
         </tr>
     </table>
 
-    <table class="no-border">
+    <table class="no-border addresses">
         <tr>
             <td style="text-align: right; width: 13%; overflow: hidden;">
                 <div style="position: absolute; rotate: -90; left: 10%; text-align: center; font-size: 70%;">
@@ -169,9 +172,7 @@ $i = 0;
             </td>
         </tr>
     </table>
-    <br/>
-    <br/>
-    <table class="no-border products" cellpadding="0" cellspacing="0">
+    <table class="no-border products" cellpadding="0" cellspacing="0" style="margin-top: 1.5cm;">
         <thead>
         <tr class="products-head">
             <td style="border-right: 0;"><?php echo $this->__('Products'); ?></td>

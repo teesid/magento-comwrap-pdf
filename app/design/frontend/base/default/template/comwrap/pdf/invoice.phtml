@@ -69,6 +69,10 @@ $i = 0;
             padding: 5pt;
         }
 
+        .addresses td {
+            vertical-align: top;
+        }
+
         .products td {
             padding: 3pt;
             height: 5pt;
@@ -138,7 +142,7 @@ $i = 0;
         </tr>
     </table>
 
-    <table class="no-border">
+    <table class="no-border addresses">
         <tr>
             <td style="text-align: right; width: 13%; height: 3cm; overflow: hidden;">
                 <div style="position: absolute; rotate: -90; left: 10%; text-align: center; font-size: 70%;">
@@ -149,18 +153,23 @@ $i = 0;
                     <?php echo $_invoice->getOrder()->getIncrementId()?>
                 </div>
             </td>
-            <td style="text-align: center; width: 2%; height: 3cm; overflow: hidden;">
-                S<br />
-                H<br />
-                I<br />
-                P<br />
-                 <br />
-                T<br />
-                O<br />
-            </td>
-            <td style="padding: 5pt; text-align: left; width: 55%; height: 3cm; overflow: hidden;">
-                <p class="address-info"><?php echo $_invoice->getShippingAddress()->format('html');?></p>
-            </td>
+            <?php if (! empty($_invoice->getShippingAddress())): ?>
+                <td style="text-align: center; width: 5%; height: 3cm; overflow: hidden;">
+                    S<br />
+                    H<br />
+                    I<br />
+                    P<br />
+                     <br />
+                    T<br />
+                    O<br />
+                </td>
+                <td style="padding: 5pt; text-align: left; width: 52%; height: 3cm; overflow: hidden;">
+                    <p class="address-info"><?php echo $_invoice->getShippingAddress()->format('html');?></p>
+                </td>
+                <?php $extra_billing_width = 0; ?>
+            <?php else: ?>
+                <?php $extra_billing_width = 57; ?>
+            <?php endif; ?>
             <td style="text-align: center; width: 5%; height: 3cm; overflow: hidden;">
                 S<br />
                 O<br />
@@ -170,8 +179,10 @@ $i = 0;
                 T<br />
                 O<br />
             </td>
-            <td style="padding: 5pt; text-align: left; width: 25%; height: 3cm; overflow: hidden;">
-                <p class="address-info"><?php echo $_invoice->getBillingAddress()->format('html');?></p>
+            <td style="padding: 5pt; text-align: left; width: <?php echo (25 + $extra_billing_width) ?>%; height: 3cm; overflow: hidden;">
+                <?php if (! empty($_invoice->getBillingAddress())): ?>
+                    <p class="address-info"><?php echo $_invoice->getBillingAddress()->format('html');?></p>
+                <?php endif; ?>
             </td>
         </tr>
     </table>
