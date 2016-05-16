@@ -113,7 +113,6 @@ $i = 0;
 	<?php
 
 	$this->setOrder($_creditmemo->getOrder());
-	$_date = new Zend_Date($_creditmemo->getOrder()->getCreatedAt());
 	?>
 
 	<?php if($imageUrl):?>
@@ -136,7 +135,7 @@ $i = 0;
 					</tr>
 					<tr>
 						<td><?php echo Mage::helper('sales')->__('Order Date: ')?></td>
-						<td><?php echo $_date->get(Mage::app()->getLocale()->getDateFormat('medium'));?></td>
+						<td><?php echo Mage::helper('core')->formatDate($this->getOrder()->getCreatedAt(), 'medium', false);?></td>
 					</tr>
 				</table>
 			</td>

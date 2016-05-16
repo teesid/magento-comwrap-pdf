@@ -114,7 +114,6 @@ $i = 0;
     <?php
 
     $this->setOrder($_invoice->getOrder());
-    $_date = new Zend_Date($_invoice->getOrder()->getCreatedAt());
 
     $need_receipt = 0;
     if (Mage::helper('core')->isModuleEnabled('Amasty_Orderattr')) {
@@ -136,8 +135,8 @@ $i = 0;
                 <?php if ($need_receipt): ?>
                     <h1><?php echo $this->__('Bill')?></h1><br />
                 <?php endif; ?>
-                <?php echo $this->__('Order Date: ')?>
-                <?php echo $_date->get(Mage::app()->getLocale()->getDateFormat('medium'));?>
+                <?php echo $this->__('Order Date: '); ?>
+                <?php echo Mage::helper('core')->formatDate($this->getOrder()->getCreatedAt(), 'medium', false); ?>
             </td>
         </tr>
     </table>

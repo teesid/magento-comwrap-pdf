@@ -115,7 +115,6 @@ $i = 0;
     <?php
 
     $this->setOrder($_shipment->getOrder());
-    $_date = new Zend_Date($_shipment->getOrder()->getCreatedAt());
     ?>
 
     <table class="no-border" style="margin-bottom: 1cm;">
@@ -130,7 +129,7 @@ $i = 0;
             <td style="width: 50%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
                 <h1><?php echo $this->__('Packing Slip')?></h1><br />
                 <?php echo $this->__('Order Date: ')?>
-                <?php echo $_date->get(Mage::app()->getLocale()->getDateFormat('medium'));?>
+                <?php echo Mage::helper('core')->formatDate($this->getOrder()->getCreatedAt(), 'medium', false); ?>
             </td>
         </tr>
     </table>
