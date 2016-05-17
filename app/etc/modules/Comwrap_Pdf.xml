@@ -4,6 +4,11 @@
         <Comwrap_Pdf>
             <active>true</active>
             <codePool>local</codePool>
+            <depends>
+                <Mage_Sales />
+                <ITwebexperts_Payperrentals />
+            </depends>
+            <version>1.0.1</version>
         </Comwrap_Pdf>
     </modules>
 </config>
