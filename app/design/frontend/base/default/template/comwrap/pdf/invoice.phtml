@@ -101,6 +101,12 @@ $i = 0;
         .product-options {
             font-size: 8pt;
         }
+
+        .collector-box {
+            display: inline-block;
+            border-top: 1px solid black;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -133,7 +139,7 @@ $i = 0;
             </td>
             <td style="width: 50%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
                 <?php if ($need_receipt): ?>
-                    <h1><?php echo $this->__('Bill')?></h1><br />
+                    <h1><?php echo $this->__('RECEIPT')?></h1><br />
                 <?php endif; ?>
                 <?php echo $this->__('Order Date: '); ?>
                 <?php echo Mage::helper('core')->formatDate($this->getOrder()->getCreatedAt(), 'medium', false); ?>
@@ -234,15 +240,43 @@ $i = 0;
             <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getGrandTotal() - $_invoice->getShippingInclTax())?></td>
         </tr>
         <tr>
-            <td style="width: 70%">&nbsp;</td>
+            <td style="width: 60%">&nbsp;</td>
             <td style="text-align: right; width: 25%;"><?php echo $this->__('Shipping & Handling')?>:</td>
             <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getShippingInclTax())?></td>
         </tr>
         <tr>
-            <td style="width: 70%">&nbsp;</td>
+            <td style="width: 60%">&nbsp;</td>
             <td style="text-align: right; width: 25%;"><?php echo $this->__('Grand Total')?>:</td>
             <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getGrandTotal())?></td>
         </tr>
+        <?php if ($need_receipt): ?>
+            <tr>
+                <td style="width: 60%">&nbsp;</td>
+                <td colspan="2" style="text-align: right; width: 40%;">
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <div class="collector-box">
+                        &nbsp;
+                        &nbsp;
+                        &nbsp;
+                        &nbsp;
+                        &nbsp;
+                        &nbsp;
+                        &nbsp;
+                        <?php echo $this->__('Collector')?>
+                        &nbsp;
+                        &nbsp;
+                        &nbsp;
+                        &nbsp;
+                        &nbsp;
+                        &nbsp;
+                        &nbsp;
+                    </div>
+                </td>
+            </tr>
+        <?php endif; ?>
         </tbody>
     </table>
     <?php ++$i;?>
