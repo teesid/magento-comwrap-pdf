@@ -28,7 +28,7 @@ require_once(Mage::getModuleDir('', 'Comwrap_Pdf') . '/lib/MPDF56/mpdf.php');
  * of Zend_Pdf so that it can work as a drop-in replacement in Magento.
  * Tested with Magento CE 1.9.2.3.
  */
-class Comwrap_Pdf
+class Comwrap_Pdf extends Zend_Pdf
 {
     /*
      * @var array   - array of Comwrap_Pdf_Block_Abstract object
