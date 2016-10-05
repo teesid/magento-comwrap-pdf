@@ -174,7 +174,10 @@ $i = 0;
     $fxCostGrandTotal = 0;
 
     foreach($_invoice->getItemsCollection() as $_item) {
-        if (strpos($_item->getSku(), 'deposit') !== false) {
+        if (
+            (strpos($_item->getSku(), 'deposit') !== false)
+            and ($_item->getOrderItem()->getParentItem())
+        ) {
             if (! $_item->getRowTotal()) {
                 $p = Mage::getModel('catalog/product')->load($_item->getProductId());
                 $_item->setRowTotal($p->getPrice() * $_item->getQty());
