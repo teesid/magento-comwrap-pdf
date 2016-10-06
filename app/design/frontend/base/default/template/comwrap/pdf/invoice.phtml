@@ -445,7 +445,7 @@ $i = 0;
         <?php endif; ?>
         </tbody>
     </table>
-    <?php if (! $depositItems) continue; ?>
+    <?php if ($depositItems): ?>
     <pagebreak />
     <?php /* BEGIN DEPOSIT RECEIPT {{{ */ ?>
     <table class="no-border" style="margin-bottom: 1cm;">
@@ -532,6 +532,7 @@ $i = 0;
     </table>
     * <?php $this->__('We will return the deposit amount after the goods has been returned to us in good condition in due time.') ?>
     <?php /* }}} END DEPOSIT RECEIPT */ ?>
+    <?php endif; ?>
     <?php ++$i;?>
     <?php $this->stopEmulateEnvironment();?>
 <?php endforeach;?>
