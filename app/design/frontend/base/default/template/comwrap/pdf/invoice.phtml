@@ -224,7 +224,7 @@ $i = 0;
             $_item->setUseFxr(1);
             $_item->setFxr($fxr);
             $_item->setFxd($fxd);
-            $_item->setFxCost($_item->getQty() * $_quoteItem->getTopupFxCost() * $fxd->getExchangeRate());
+            $_item->setFxCost($_quoteItem->getQty() * $_quoteItem->getTopupFxCost() * $fxd->getExchangeRate());
 
             $lastParentItemFxCostTotal += $_item->getFxCost();
         }
