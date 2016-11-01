@@ -258,8 +258,8 @@ $i = 0;
                 <?php if ($need_receipt): ?>
                     <h1><?php echo $this->__('Bill')?></h1><br />
                 <?php endif; ?>
-                <?php echo $this->__('Order Date: '); ?>
-                <?php echo Mage::helper('core')->formatDate($this->getOrder()->getCreatedAt(), 'medium', false); ?>
+                <?php echo $this->__('Invoice Date: '); ?>
+                <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAt(), 'medium', false); ?>
             </td>
         </tr>
     </table>
@@ -455,8 +455,8 @@ $i = 0;
             </td>
             <td style="width: 50%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
                 <h1><?php echo $this->__('Deposit Receipt')?></h1><br />
-                <?php echo $this->__('Order Date: '); ?>
-                <?php echo Mage::helper('core')->formatDate($this->getOrder()->getCreatedAt(), 'medium', false); ?>
+                <?php echo $this->__('Invoice Date: '); ?>
+                <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAt(), 'medium', false); ?>
             </td>
         </tr>
     </table>
