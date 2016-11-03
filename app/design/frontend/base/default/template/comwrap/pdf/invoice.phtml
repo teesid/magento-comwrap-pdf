@@ -178,13 +178,15 @@ $i = 0;
             (strpos($_item->getSku(), 'deposit') !== false)
             and ($_item->getOrderItem()->getParentItem())
         ) {
-            if (! $_item->getRowTotal()) {
+            // See assumption 1 above
+            if ($lastParentItem->getRowTotal()) {
                 $p = Mage::getModel('catalog/product')->load($_item->getProductId());
                 $_item->setRowTotal($p->getPrice() * $_item->getQty());
+            } else {
+                $lastParentItemTotal += $_item->getRowTotal();
+                $lastParentItemDiscountTotal += $_item->getDiscountAmount();
             }
-            if ($_item->getOrderItem()->getParentItem()) {
-                $lastParentItemDeposit += $_item->getRowTotal() - $_item->getDiscountAmount();
-            }
+            $lastParentItemDeposit += $_item->getRowTotal() - $_item->getDiscountAmount();
             $depositGrandTotal += $_item->getRowTotal() - $_item->getDiscountAmount();
             $depositItems[] = $_item;
             continue;
