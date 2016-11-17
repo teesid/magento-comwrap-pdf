@@ -174,6 +174,13 @@ $i = 0;
     $fxCostGrandTotal = 0;
 
     foreach($_invoice->getItemsCollection() as $_item) {
+        $_quoteItem = Mage::getModel('sales/quote_item')->load($_item->getOrderItem()->getQuoteItemId());
+
+        // TODO: Find out how this can happen!!!
+        if ($_item->getQty() == $_quoteItem->getQty() ** 2) {
+            $_item->setQty($_quoteItem->getQty());
+        }
+
         if (
             (strpos($_item->getSku(), 'deposit') !== false)
             and ($_item->getOrderItem()->getParentItem())
@@ -216,7 +223,6 @@ $i = 0;
             $lastChildrenList = array();
         }
 
-        $_quoteItem = Mage::getModel('sales/quote_item')->load($_item->getOrderItem()->getQuoteItemId());
         $_item->setQuoteItem($_quoteItem);
         $useFxr = $_quoteItem->getTopupUseFxReserve();
         if ($useFxr) {
