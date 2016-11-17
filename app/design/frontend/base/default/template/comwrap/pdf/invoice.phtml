@@ -177,7 +177,7 @@ $i = 0;
         $_quoteItem = Mage::getModel('sales/quote_item')->load($_item->getOrderItem()->getQuoteItemId());
 
         // TODO: Find out how this can happen!!!
-        if ($_item->getQty() == $_quoteItem->getQty() ** 2) {
+        if ($_item->getQty() == pow($_quoteItem->getQty(), 2)) {
             $_item->setQty($_quoteItem->getQty());
         }
 
