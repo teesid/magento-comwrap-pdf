@@ -216,17 +216,23 @@ $i = 0;
             $lastChildrenList = array();
         }
 
-        $_quoteItem = Mage::getModel('sales/quote_item')->load($_item->getOrderItem()->getQuoteItemId());
-        $_item->setQuoteItem($_quoteItem);
-        $useFxr = $_quoteItem->getTopupUseFxReserve();
-        if ($useFxr) {
-            $fxr = Mage::getModel('instasim_topupproduct/fxreserve')->load($_quoteItem->getTopupFxReserve());
-            $fxd = Mage::getModel('instasim_topupproduct/deposit')->load($_quoteItem->getTopupFxDeposit());
+        if ($_item->getOrderItem()->getTopupUseFxReserve()) {
+            $_quoteItem = Mage::getModel('sales/quote_item')->load($_item->getOrderItem()->getQuoteItemId());
+            if ($_quoteItem->getId()) {
+                $fxd = Mage::getModel('instasim_topupproduct/deposit')->load($_quoteItem->getTopupFxDeposit());
+            } else {
+                // TOTO: Eventually we should only use this case of the if block
+                $fxd = Mage::getModel('instasim_topupproduct/deposit')->load($_item->getOrderItem()->getTopupFxDeposit());
+            }
+
+            $fxr = Mage::getModel('instasim_topupproduct/fxreserve')->load($_item->getOrderItem()->getTopupFxReserve());
+            $topupFxCost = $_item->getOrderItem()->getTopupFxCost();
 
             $_item->setUseFxr(1);
             $_item->setFxr($fxr);
             $_item->setFxd($fxd);
-            $_item->setFxCost($_item->getQty() * $_quoteItem->getTopupFxCost() * $fxd->getExchangeRate());
+            $_item->setTopupFxCost($topupFxCost);
+            $_item->setFxCost($_item->getQty() * $_item->getTopupFxCost() * $fxd->getExchangeRate());
 
             $lastParentItemFxCostTotal += $_item->getFxCost();
         }
@@ -362,7 +368,7 @@ $i = 0;
                 </tr>
                 <?php if ($_childItem->getFxCost()): ?>
                     <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
-                        <td style="padding-left: 1.5cm">(*) <?php echo (int)$_item->getQty() ." x ". $this->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_childItem->getQuoteItem()->getTopupFxCost(), $_childItem->getFxr()->getCurrencySymbol(), $_childItem->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_childItem->getFxr()->getCurrencySymbol()); ?></td>
+                        <td style="padding-left: 1.5cm">(*) <?php echo (int)$_item->getQty() ." x ". $this->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_childItem->getTopupFxCost(), $_childItem->getFxr()->getCurrencySymbol(), $_childItem->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_childItem->getFxr()->getCurrencySymbol()); ?></td>
                         <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_childItem->getFxCost())?></td>
                         <td style="text-align: right;"><?php echo Mage::helper('core')->currency(0)?></td>
                         <td style="text-align: right;"></td>
@@ -372,7 +378,7 @@ $i = 0;
             <?php endforeach; ?>
             <?php if ($_item->getFxCost()): ?>
                 <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
-                    <td style="padding-left: 1cm">(*) <?php echo (int)$_item->getQty() ." x ". $this->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_item->getQuoteItem()->getTopupFxCost(), $_item->getFxr()->getCurrencySymbol(), $_item->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_item->getFxr()->getCurrencySymbol()); ?></td>
+                    <td style="padding-left: 1cm">(*) <?php echo (int)$_item->getQty() ." x ". $this->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_item->getTopupFxCost(), $_item->getFxr()->getCurrencySymbol(), $_item->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_item->getFxr()->getCurrencySymbol()); ?></td>
                     <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getFxCost())?></td>
                     <td style="text-align: right;"><?php echo Mage::helper('core')->currency(0)?></td>
                     <td style="text-align: right;"></td>
