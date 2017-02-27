@@ -54,5 +54,25 @@
                 </comwrap_pdf>
             </updates>
         </layout>
+        <translate>
+            <modules>
+                <Comwrap_Pdf>
+                    <files>
+                        <default>Comwrap_Pdf.csv</default>
+                    </files>
+                </Comwrap_Pdf>
+            </modules>
+        </translate>
     </frontend>
+    <adminhtml>
+        <translate>
+            <modules>
+                <Comwrap_Pdf>
+                    <files>
+                        <default>Comwrap_Pdf.csv</default>
+                    </files>
+                </Comwrap_Pdf>
+            </modules>
+        </translate>
+    </adminhtml>
 </config>

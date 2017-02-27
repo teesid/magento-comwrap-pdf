@@ -23,7 +23,50 @@
  *
  * @var $this Comwrap_Pdf_Block_Invoice
  */
-$logoUrl = Mage::getStoreConfig('design/header/logo_src');
+$logoUrl = $this->getSkinUrl(Mage::getStoreConfig('design/header/logo_src'));
+$svgLogo = <<<EOSVG
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="2.84cm" height="2.32cm" viewBox="0 0 142 116" enable-background="new 0 0 142 116" xml:space="preserve">
+<g>
+	<path d="M91.438,21.14L80.855,10.559c-0.714-0.852-2.554-2.2-5.259-2.2H55.875c-3.686,0-6.684,2.998-6.684,6.684v51.792
+		c0,3.687,2.999,6.686,6.684,6.686h31.207c3.685,0,6.685-2.999,6.685-6.686V26.899C93.767,23.308,91.949,21.56,91.438,21.14z
+		 M55.875,11.277h19.721c2.027,0,3.003,1.132,3.029,1.164l0.054,0.068l10.752,10.754l0.146,0.126c0.051,0.04,1.27,1.046,1.27,3.51
+		v11.444c-1.19,0.242-2.463,0.386-3.815,0.386c-4.894,0-9.928-1.842-14.968-5.47c-5.389-3.882-10.82-5.85-16.14-5.85
+		c-1.346,0-2.62,0.13-3.815,0.346V15.043C52.109,12.967,53.798,11.277,55.875,11.277z M87.082,70.599H55.875
+		c-2.076,0-3.765-1.687-3.765-3.764V48.031c1.189-0.242,2.461-0.386,3.815-0.386c4.888,0,9.928,1.838,14.967,5.468
+		c5.388,3.881,10.821,5.851,16.142,5.851c1.348,0,2.618-0.131,3.815-0.347v8.218C90.848,68.912,89.161,70.599,87.082,70.599z"/>
+	<g>
+		<g>
+			<path d="M17.174,85.573c0,2.625-3.98,2.625-3.98,0C13.194,82.945,17.174,82.945,17.174,85.573z M13.286,89.829v15.385h3.793
+				V89.829H13.286z"/>
+			<path d="M31.468,105.214v-8.017c0-2.332-1.272-4.102-3.7-4.102c-2.33,0-3.912,1.957-3.912,4.288v7.832h-3.764V89.862h3.627
+				l0.008,2.082c1.555-1.524,3.111-2.3,5.038-2.3c3.606,0,6.497,2.703,6.497,7.521v8.049H31.468z"/>
+			<path d="M48.218,93.963c-1.084-1.025-2.329-1.369-3.788-1.369c-1.807,0-2.799,0.561-2.799,1.526c0,0.994,0.899,1.552,2.859,1.675
+				c2.889,0.186,6.558,0.841,6.558,4.912c0,2.706-2.208,5.035-6.588,5.035c-2.424,0-4.852-0.404-7.087-2.734l1.864-2.706
+				c1.09,1.214,3.576,2.113,5.283,2.146c1.433,0.03,2.771-0.716,2.771-1.833c0-1.056-0.872-1.493-3.045-1.616
+				c-2.895-0.217-6.342-1.273-6.342-4.754c0-3.544,3.665-4.789,6.464-4.789c2.392,0,4.194,0.47,5.965,2.025L48.218,93.963z"/>
+			<path d="M58.505,85.573v4.352h4.227v3.261h-4.256v6.62c0,1.462,0.807,2.177,1.987,2.177c0.591,0,1.274-0.187,1.834-0.465
+				l1.057,3.232c-1.087,0.435-1.989,0.621-3.14,0.651c-3.326,0.126-5.499-1.769-5.499-5.595v-6.62h-2.861v-3.261h2.861v-3.948
+				L58.505,85.573z"/>
+			<path d="M77.271,89.893h3.764v15.321h-3.764l0.004-2.238c-0.867,1.802-3.264,2.673-4.972,2.704
+				c-4.538,0.032-7.894-2.765-7.894-8.14c0-5.286,3.513-8.05,7.991-8.021c2.048,0,4.009,0.966,4.875,2.489L77.271,89.893z
+				 M68.199,97.54c0,2.921,2.024,4.661,4.541,4.661c5.967,0,5.967-9.294,0-9.294C70.224,92.906,68.199,94.615,68.199,97.54z"/>
+			<path d="M93.935,93.963c-1.09-1.025-2.333-1.369-3.792-1.369c-1.803,0-2.799,0.561-2.799,1.526c0,0.994,0.902,1.552,2.859,1.675
+				c2.892,0.186,6.558,0.841,6.558,4.912c0,2.706-2.207,5.035-6.588,5.035c-2.424,0-4.848-0.404-7.087-2.734l1.867-2.706
+				c1.085,1.214,3.572,2.113,5.283,2.146c1.429,0.03,2.764-0.716,2.764-1.833c0-1.056-0.869-1.493-3.042-1.616
+				c-2.891-0.217-6.345-1.273-6.345-4.754c0-3.544,3.671-4.789,6.467-4.789c2.393,0,4.194,0.47,5.967,2.025L93.935,93.963z"/>
+			<path d="M102.681,85.536c0,2.521-3.825,2.521-3.825,0C98.856,83.013,102.681,83.013,102.681,85.536z M98.873,89.829v15.385h3.792
+				V89.829H98.873z"/>
+			<path d="M115.965,105.214v-8.206c0-2.022-1.057-3.853-3.138-3.853c-2.052,0-3.266,1.831-3.266,3.853v8.206h-3.788V89.862h3.777
+				l0.01,1.864c0.809-1.554,2.58-2.114,4.042-2.114c1.833,0,3.666,0.746,4.538,2.859c1.366-2.175,3.138-2.794,5.128-2.794
+				c4.35,0,6.493,2.67,6.493,7.27v8.268h-3.792v-8.268c0-2.021-0.838-3.729-2.887-3.729c-2.051,0-3.327,1.77-3.327,3.792v8.206
+				H115.965z"/>
+		</g>
+	</g>
+</g>
+</svg>
+EOSVG;
+$_helper = Mage::helper('comwrap_pdf');
 
 $i = 0;
 ?>
@@ -131,13 +174,6 @@ $i = 0;
 
     $this->setOrder($_invoice->getOrder());
 
-    $need_receipt = 0;
-    if (Mage::helper('core')->isModuleEnabled('Amasty_Orderattr')) {
-        $need_receipt = Mage::getModel('amorderattr/attribute')
-            ->load($_invoice->getOrder()->getId(), 'order_id')
-            ->getData('need_receipt');
-    }
-
     /* 
      * ASSUMPTION 1:
      *   The price are either exclusively in the parent or children rows only.
@@ -170,6 +206,7 @@ $i = 0;
     $lastChildrenList = array();
 
     $depositItems = array();
+    $topupItems = array();
     $depositGrandTotal = 0;
     $fxCostGrandTotal = 0;
 
@@ -188,7 +225,7 @@ $i = 0;
             }
             $lastParentItemDeposit += $_item->getRowTotal() - $_item->getDiscountAmount();
             $depositGrandTotal += $_item->getRowTotal() - $_item->getDiscountAmount();
-            $depositItems[] = $_item;
+            $depositItems[] = $_item;            
             continue;
         }
 
@@ -234,8 +271,12 @@ $i = 0;
             $_item->setTopupFxCost($topupFxCost);
             $_item->setFxCost($_item->getQty() * $_item->getTopupFxCost() * $fxd->getExchangeRate());
 
-            $lastParentItemFxCostTotal += $_item->getFxCost();
+            if ($_item->getFxCost()) {
+                $topupItems[] = $_item;
+                $lastParentItemFxCostTotal += $_item->getFxCost();
+            }
         }
+
         $lastParentItemTotal += $_item->getRowTotal();
         // See assumption 1
         $lastParentItemDiscountTotal += $_item->getDiscountAmount();
@@ -257,16 +298,19 @@ $i = 0;
 
     <table class="no-border" style="margin-bottom: 1cm;">
         <tr>
-            <td style="width: 50%; height: 3cm; overflow: hidden;">
-                <?php if ($need_receipt) {
-                    echo $this->getLayout()->createBlock('cms/block')->setBlockId('store_billing_contact')->toHtml(); 
-                } ?>
+            <td style="width: 18%; padding-left: 0.5cm; height: 3cm; overflow: hidden;">
+                <?php echo $svgLogo; ?>
             </td>
-            <td style="width: 50%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
-                <?php if ($need_receipt): ?>
-                    <h1><?php echo $this->__('Bill')?></h1><br />
-                <?php endif; ?>
-                <?php echo $this->__('Invoice Date: '); ?>
+            <td style="width: 52%; height: 3cm; overflow: hidden;">
+                <?php
+                    echo $this->getLayout()->createBlock('cms/block')->setBlockId('store_billing_contact')->toHtml(); 
+                ?>
+            </td>
+            <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
+                <h1><?php echo $_helper->__('Invoice')?></h1><br />
+                <?php echo $_helper->__('Invoice Number: ') . 'INV-' . $_invoice->getIncrementId(); ?>
+                <br />
+                <?php echo $_helper->__('Invoice Date: '); ?>
                 <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAt(), 'medium', false); ?>
             </td>
         </tr>
@@ -276,7 +320,7 @@ $i = 0;
         <tr>
             <td style="text-align: right; width: 13%; height: 3cm; overflow: hidden;">
                 <div style="position: absolute; rotate: -90; left: 10%; text-align: center; font-size: 70%;">
-                    <?php echo $this->__('Order # ')?>
+                    <?php echo $_helper->__('Order # ')?>
                     <br />
                     <barcode code="<?php echo $_invoice->getOrder()->getIncrementId()?>" type="C128A" size="0.5" />
                     <br />
@@ -319,14 +363,14 @@ $i = 0;
     <table class="products" cellpadding="0" cellspacing="0" style="margin-top: 1.5cm;">
         <thead>
         <tr>
-            <th rowspan="2"><?php echo $this->__('Products'); ?></th>
-            <th colspan="2"><?php echo $this->__('Sub-Item'); ?></th>
-            <th rowspan="2"><?php echo $this->__('Price'); ?></th>
-            <th rowspan="2"><?php echo $this->__('Discount'); ?></th>
+            <th rowspan="2"><?php echo $_helper->__('Products'); ?></th>
+            <th colspan="2"><?php echo $_helper->__('Sub-Item'); ?></th>
+            <th rowspan="2"><?php echo $_helper->__('Price'); ?></th>
+            <th rowspan="2"><?php echo $_helper->__('Discount'); ?></th>
         </tr>
         <tr>
-            <th><?php echo $this->__('Price'); ?></td>
-            <th><?php echo $this->__('Discount'); ?></td>
+            <th><?php echo $_helper->__('Price'); ?></td>
+            <th><?php echo $_helper->__('Discount'); ?></td>
         </tr>
         </thead>
         <tbody>
@@ -355,39 +399,21 @@ $i = 0;
 
                 <td style="text-align: right;">-----</td>
                 <td style="text-align: right;">-----</td>
-                <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getItemTotal()); ?></td>
+                <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getItemTotal() - $_item->getFxCostTotal()); ?></td>
                 <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getItemDiscountTotal()); ?></td>
             </tr>
             <?php foreach($_item->getChildrenItems() as $_childItem): ?>
                 <tr class="<?php echo $grayRow ? 'gray' : ""; ?>">
                     <td style="padding-left: 1cm"><?php echo ($_childItem->getRowTotal() ? (int)$_childItem->getQty() . " x " : "") . $_childItem->getName() ?></td>
-                    <td style="text-align: right;"><?php echo $_childItem->getRowTotal() ? Mage::helper('core')->currency($_childItem->getRowTotal()) : ""; ?></td>
+                    <td style="text-align: right;"><?php echo $_childItem->getRowTotal() ? Mage::helper('core')->currency($_childItem->getRowTotal() - $_childItem->getFxCost()) : ""; ?></td>
                     <td style="text-align: right;"><?php echo $_childItem->getRowTotal() ? Mage::helper('core')->currency($_childItem->getDiscountAmount()) : ""; ?></td>
                     <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
                 </tr>
-                <?php if ($_childItem->getFxCost()): ?>
-                    <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
-                        <td style="padding-left: 1.5cm">(*) <?php echo (int)$_item->getQty() ." x ". $this->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_childItem->getTopupFxCost(), $_childItem->getFxr()->getCurrencySymbol(), $_childItem->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_childItem->getFxr()->getCurrencySymbol()); ?></td>
-                        <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_childItem->getFxCost())?></td>
-                        <td style="text-align: right;"><?php echo Mage::helper('core')->currency(0)?></td>
-                        <td style="text-align: right;"></td>
-                        <td style="text-align: right;"></td>
-                    </tr>
-                <?php endif; ?>
             <?php endforeach; ?>
-            <?php if ($_item->getFxCost()): ?>
-                <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
-                    <td style="padding-left: 1cm">(*) <?php echo (int)$_item->getQty() ." x ". $this->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_item->getTopupFxCost(), $_item->getFxr()->getCurrencySymbol(), $_item->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_item->getFxr()->getCurrencySymbol()); ?></td>
-                    <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getFxCost())?></td>
-                    <td style="text-align: right;"><?php echo Mage::helper('core')->currency(0)?></td>
-                    <td style="text-align: right;"></td>
-                    <td style="text-align: right;"></td>
-                </tr>
-            <?php endif; ?>
-            <?php if ($_item->getFxCostTotal()): ?>
+            <?php if ($_item->getFxCostTotal() and $_item->getItemTotal() == $_item->getRowTotal()): ?>
                 <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The Rest -->
-                    <td style="padding-left: 1cm"><?php echo $_item->getOrderItem()->getNonTopupValueLabel() ?: $this->__('SIM fee'); ?></td>
+                    <td style="padding-left: 1cm"><?php echo $_item->getOrderItem()->getNonTopupValueLabel() ?: $_helper->__('SIM fee'); ?></td>
                     <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getItemTotal() - $_item->getFxCostTotal())?></td>
                     <td style="text-align: right;"><?php echo $_item->getRowTotal() ? Mage::helper('core')->currency($_item->getDiscountAmount()) : ""; // See assumption 1?></td>
                     <td style="text-align: right;"></td>
@@ -403,79 +429,300 @@ $i = 0;
         <tbody>
         <tr>
             <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php echo $this->__('Subtotal');?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getGrandTotal() - $_invoice->getShippingInclTax() - $depositGrandTotal)?></td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Subtotal');?>:</td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getGrandTotal() - $_invoice->getShippingInclTax() - $depositGrandTotal - $fxCostGrandTotal)?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php if ($fxCostGrandTotal) echo '(*' . $this->__('Net Without Credit Value') . ': ' . Mage::helper('core')->currency($_invoice->getGrandTotal() - $_invoice->getShippingInclTax() - $depositGrandTotal - $fxCostGrandTotal) . ')'; ?></td>
-            <td style="text-align: right; width: 15%;"></td>
-        </tr>
-        <tr>
-            <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php echo $this->__('Shipping & Handling')?>:</td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Shipping & Handling')?>:</td>
             <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getShippingInclTax())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php echo $this->__('Grand Total')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getGrandTotal() - $depositGrandTotal)?></td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Grand Total')?>:</td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getGrandTotal() - $_invoice->getShippingInclTax() - $depositGrandTotal - $fxCostGrandTotal)?></td>
         </tr>
-        <?php if ($need_receipt): ?>
-            <tr>
-                <td style="width: 20%">&nbsp;</td>
-                <td colspan="2" style="text-align: right; width: 80%;">
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <div class="collector-box">
-                        &nbsp;
-                        &nbsp;
-                        &nbsp;
-                        &nbsp;
-                        &nbsp;
-                        &nbsp;
-                        &nbsp;
-                        <?php echo $this->__('Collector')?>
-                        &nbsp;
-                        &nbsp;
-                        &nbsp;
-                        &nbsp;
-                        &nbsp;
-                        &nbsp;
-                        &nbsp;
-                    </div>
-                </td>
-            </tr>
-        <?php endif; ?>
+        <tr>
+            <td style="width: 20%">&nbsp;</td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Grand Total Excl. VAT')?>:</td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency(0.93 * ($_invoice->getGrandTotal() - $_invoice->getShippingInclTax() - $depositGrandTotal - $fxCostGrandTotal))?></td>
+        </tr>
+        <tr>
+            <td style="width: 20%">&nbsp;</td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('VAT')?>:</td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency(0.07 * ($_invoice->getGrandTotal() - $_invoice->getShippingInclTax() - $depositGrandTotal - $fxCostGrandTotal))?></td>
+        </tr>
+        <tr>
+            <td style="width: 20%">&nbsp;</td>
+            <td colspan="2" style="text-align: right; width: 80%;">
+                <br />
+                <br />
+                <br />
+                <br />
+                <div class="collector-box">
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    <?php echo $_helper->__('Collector')?>
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                </div>
+            </td>
+        </tr>
         </tbody>
     </table>
-    <?php if ($depositItems): ?>
+    <?php if ($topupItems): ?>
+    <?php /* BEGIN TOPUP RECEIPT {{{ */ ?>
     <pagebreak />
-    <?php /* BEGIN DEPOSIT RECEIPT {{{ */ ?>
     <table class="no-border" style="margin-bottom: 1cm;">
         <tr>
-            <td style="width: 50%; height: 3cm; overflow: hidden;">
-                <?php
+            <td style="width: 18%; padding-left: 0.5cm; height: 3cm; overflow: hidden;">
+                <?php echo $svgLogo; ?>
+            </td>
+            <td style="width: 52%; height: 3cm; overflow: hidden;">
+                <?php 
                     echo $this->getLayout()->createBlock('cms/block')->setBlockId('store_billing_contact')->toHtml(); 
                 ?>
             </td>
-            <td style="width: 50%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
-                <h1><?php echo $this->__('Deposit Receipt')?></h1><br />
-                <?php echo $this->__('Invoice Date: '); ?>
+            <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
+                <h1><?php echo $_helper->__('Money Receipt')?></h1><br />
+                <?php echo $_helper->__('Invoice Date: '); ?>
                 <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAt(), 'medium', false); ?>
+            </td>
+        </tr>
+    </table>
+
+    <table class="no-border addresses">
+        <tr>
+            <td style="text-align: right; width: 13%; height: 3cm; overflow: hidden;">
+                <div style="position: absolute; rotate: -90; left: 10%; text-align: center; font-size: 70%;">
+                    <?php echo $_helper->__('Order # ')?>
+                    <br />
+                    <barcode code="<?php echo $_invoice->getOrder()->getIncrementId()?>" type="C128A" size="0.5" />
+                    <br />
+                    <?php echo $_invoice->getOrder()->getIncrementId()?>
+                </div>
+            </td>
+            <?php if (! empty($_invoice->getShippingAddress())): ?>
+                <td style="text-align: center; width: 5%; height: 3cm; overflow: hidden;">
+                    S<br />
+                    H<br />
+                    I<br />
+                    P<br />
+                     <br />
+                    T<br />
+                    O<br />
+                </td>
+                <td style="padding: 5pt; text-align: left; width: 52%; height: 3cm; overflow: hidden;">
+                    <p class="address-info"><?php echo $_invoice->getShippingAddress()->format('html');?></p>
+                </td>
+                <?php $extra_billing_width = 0; ?>
+            <?php else: ?>
+                <?php $extra_billing_width = 57; ?>
+            <?php endif; ?>
+            <td style="text-align: center; width: 5%; height: 3cm; overflow: hidden;">
+                S<br />
+                O<br />
+                L<br />
+                D<br />
+                 <br />
+                T<br />
+                O<br />
+            </td>
+            <td style="padding: 5pt; text-align: left; width: <?php echo (25 + $extra_billing_width) ?>%; height: 3cm; overflow: hidden;">
+                <?php if (! empty($_invoice->getBillingAddress())): ?>
+                    <p class="address-info"><?php echo $_invoice->getBillingAddress()->format('html');?></p>
+                <?php endif; ?>
             </td>
         </tr>
     </table>
     <table class="products" cellpadding="0" cellspacing="0" style="margin-top: 1.5cm;">
         <thead>
         <tr>
-            <th><?php echo $this->__('Product Deposit Detail'); ?></th>
-            <th style="text-align: right;"><?php echo $this->__('Qty'); ?></th>
-            <th style="text-align: right;"><?php echo $this->__('Deposit Amount'); ?></th>
-            <th style="text-align: right;"><?php echo $this->__('Discount'); ?></th>
-            <th style="text-align: right;"><?php echo $this->__('Subtotal'); ?></th>
+            <th rowspan="2"><?php echo $_helper->__('Item'); ?></th>
+            <th colspan="2"><?php echo $_helper->__('Sub-Item'); ?></th>
+            <th rowspan="2"><?php echo $_helper->__('Amount'); ?></th>
+            <th rowspan="2"><?php echo $_helper->__('Discount'); ?></th>
+        </tr>
+        <tr>
+            <th><?php echo $_helper->__('Amount'); ?></td>
+            <th><?php echo $_helper->__('Discount'); ?></td>
+        </tr>
+        </thead>
+        <tbody>
+        <?php $grayRow = true; ?>
+        <?php /* @var $_item Mage_Sales_Model_Order_Invoice_Item */?>
+        <?php foreach($invoiceItems as $_item): ?>
+            <?php $grayRow = ! $grayRow; ?>
+            <tr class="<?php echo $grayRow ? 'gray' : ""; ?> parent-product">
+                <?php
+                $productOptions = $_item->getOrderItem()->getProductOptions();
+                ?>
+                <?php if(!empty($productOptions['attributes_info'])): ?>
+                    <td>
+                        <?php echo (int)$_item->getQty() ." x ". $_item->getName();?>
+                        <?php foreach($productOptions['attributes_info'] as $productOption):?>
+                            <br />
+                            <span class="product-options">
+                                <i><?php echo $productOption['label']?></i><br />
+                                &nbsp;&nbsp;&nbsp;&nbsp;<?php echo $productOption['value'];?>
+                            </span>
+                        <?php endforeach;?>
+                    </td>
+                <?php else: ?>
+                    <td><?php echo (int)$_item->getQty() ." x ". $_item->getName() ?></td>
+                <?php endif;?>
+
+                <td style="text-align: right;">-----</td>
+                <td style="text-align: right;">-----</td>
+                <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getFxCostTotal()); ?></td>
+                <td style="text-align: right;"><?php echo Mage::helper('core')->currency(0); ?></td>
+            </tr>
+            <?php foreach($_item->getChildrenItems() as $_childItem): ?>
+                <?php if ($_childItem->getFxCost()): ?>
+                    <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
+                        <td style="padding-left: 1.5cm">(*) <?php echo (int)$_item->getQty() ." x ". $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_childItem->getTopupFxCost(), $_childItem->getFxr()->getCurrencySymbol(), $_childItem->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_childItem->getFxr()->getCurrencySymbol()); ?></td>
+                        <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_childItem->getFxCost())?></td>
+                        <td style="text-align: right;"><?php echo Mage::helper('core')->currency(0)?></td>
+                        <td style="text-align: right;"></td>
+                        <td style="text-align: right;"></td>
+                    </tr>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            <?php if ($_item->getFxCost()): ?>
+                <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
+                    <td style="padding-left: 1cm">(*) <?php echo (int)$_item->getQty() ." x ". $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_item->getTopupFxCost(), $_item->getFxr()->getCurrencySymbol(), $_item->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_item->getFxr()->getCurrencySymbol()); ?></td>
+                    <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getFxCost())?></td>
+                    <td style="text-align: right;"><?php echo Mage::helper('core')->currency(0)?></td>
+                    <td style="text-align: right;"></td>
+                    <td style="text-align: right;"></td>
+                </tr>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <br />
+    <br /><br />
+    <table class="no-border totals" style="" cellpadding="0" cellspacing="0">
+        <tbody>
+        <tr>
+            <td style="width: 60%">&nbsp;</td>
+            <td style="text-align: right; width: 25%;"><?php echo $_helper->__('Grand Total')?>:</td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($fxCostGrandTotal)?></td>
+        </tr>
+        <tr>
+            <td style="width: 60%">&nbsp;</td>
+            <td colspan="2" style="text-align: right; width: 40%;">
+                <br />
+                <br />
+                <br />
+                <br />
+                <div class="collector-box">
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    <?php echo $_helper->__('Collector')?>
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    * <?php echo $_helper->__("The exchange rate is based on the bank's rate on the date the company transacted the exchange and not necessarily the rate on the order date.") ?>
+    <?php /* }}} END TOPUP RECEIPT */ ?>
+    <?php endif; ?>
+    <?php if ($depositItems): ?>
+    <?php /* BEGIN DEPOSIT RECEIPT {{{ */ ?>
+    <pagebreak />
+    <table class="no-border" style="margin-bottom: 1cm;">
+        <tr>
+            <td style="width: 18%; padding-left: 0.5cm; height: 3cm; overflow: hidden;">
+                <?php echo $svgLogo; ?>
+            </td>
+            <td style="width: 52%; height: 3cm; overflow: hidden;">
+                <?php
+                    echo $this->getLayout()->createBlock('cms/block')->setBlockId('store_billing_contact')->toHtml(); 
+                ?>
+            </td>
+            <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
+                <h1><?php echo $_helper->__('Deposit Receipt')?></h1><br />
+                <?php echo $_helper->__('Invoice Date: '); ?>
+                <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAt(), 'medium', false); ?>
+            </td>
+        </tr>
+    </table>
+
+    <table class="no-border addresses">
+        <tr>
+            <td style="text-align: right; width: 13%; height: 3cm; overflow: hidden;">
+                <div style="position: absolute; rotate: -90; left: 10%; text-align: center; font-size: 70%;">
+                    <?php echo $_helper->__('Order # ')?>
+                    <br />
+                    <barcode code="<?php echo $_invoice->getOrder()->getIncrementId()?>" type="C128A" size="0.5" />
+                    <br />
+                    <?php echo $_invoice->getOrder()->getIncrementId()?>
+                </div>
+            </td>
+            <?php if (! empty($_invoice->getShippingAddress())): ?>
+                <td style="text-align: center; width: 5%; height: 3cm; overflow: hidden;">
+                    S<br />
+                    H<br />
+                    I<br />
+                    P<br />
+                     <br />
+                    T<br />
+                    O<br />
+                </td>
+                <td style="padding: 5pt; text-align: left; width: 52%; height: 3cm; overflow: hidden;">
+                    <p class="address-info"><?php echo $_invoice->getShippingAddress()->format('html');?></p>
+                </td>
+                <?php $extra_billing_width = 0; ?>
+            <?php else: ?>
+                <?php $extra_billing_width = 57; ?>
+            <?php endif; ?>
+            <td style="text-align: center; width: 5%; height: 3cm; overflow: hidden;">
+                S<br />
+                O<br />
+                L<br />
+                D<br />
+                 <br />
+                T<br />
+                O<br />
+            </td>
+            <td style="padding: 5pt; text-align: left; width: <?php echo (25 + $extra_billing_width) ?>%; height: 3cm; overflow: hidden;">
+                <?php if (! empty($_invoice->getBillingAddress())): ?>
+                    <p class="address-info"><?php echo $_invoice->getBillingAddress()->format('html');?></p>
+                <?php endif; ?>
+            </td>
+        </tr>
+    </table>
+    <table class="products" cellpadding="0" cellspacing="0" style="margin-top: 1.5cm;">
+        <thead>
+        <tr>
+            <th><?php echo $_helper->__('Product Deposit Detail'); ?></th>
+            <th style="text-align: right;"><?php echo $_helper->__('Qty'); ?></th>
+            <th style="text-align: right;"><?php echo $_helper->__('Deposit Amount'); ?></th>
+            <th style="text-align: right;"><?php echo $_helper->__('Discount'); ?></th>
+            <th style="text-align: right;"><?php echo $_helper->__('Subtotal'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -505,7 +752,7 @@ $i = 0;
         <tbody>
         <tr>
             <td style="width: 60%">&nbsp;</td>
-            <td style="text-align: right; width: 25%;"><?php echo $this->__('Grand Total')?>:</td>
+            <td style="text-align: right; width: 25%;"><?php echo $_helper->__('Grand Total')?>:</td>
             <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($depositGrandTotal)?></td>
         </tr>
         <tr>
@@ -523,7 +770,7 @@ $i = 0;
                     &nbsp;
                     &nbsp;
                     &nbsp;
-                    <?php echo $this->__('Collector')?>
+                    <?php echo $_helper->__('Collector')?>
                     &nbsp;
                     &nbsp;
                     &nbsp;
@@ -536,7 +783,7 @@ $i = 0;
         </tr>
         </tbody>
     </table>
-    * <?php echo $this->__('We will return the deposit amount after the goods has been returned to us in good condition in due time.') ?>
+    * <?php echo $_helper->__('We will return the deposit amount after the goods has been returned to us in good condition in due time.') ?>
     <?php /* }}} END DEPOSIT RECEIPT */ ?>
     <?php endif; ?>
     <?php ++$i;?>
