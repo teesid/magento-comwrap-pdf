@@ -22,5 +22,11 @@
  * @version 1.0
  */
 class Comwrap_Pdf_Helper_Data extends Mage_Core_Helper_Abstract {
-
+    public function getQtyString($i) {
+        if ($i > 1) {
+            return (int)$i . " x ";
+        } else {
+            return "";
+        }
+    }
 }

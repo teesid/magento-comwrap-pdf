@@ -1,4 +1,9 @@
 <?php
+$_temp_dir = Mage::getBaseDir('var') . DIRECTORY_SEPARATOR . 'tmp';
+if (! file_exists($_temp_dir)) {
+    mkdir($_temp_dir, 0777);
+}
+define("_MPDF_TEMP_PATH", $_temp_dir);
 require_once(Mage::getModuleDir('', 'Comwrap_Pdf') . '/lib/MPDF56/mpdf.php');
 
 /**

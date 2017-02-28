@@ -308,9 +308,9 @@ $i = 0;
             </td>
             <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
                 <h1><?php echo $_helper->__('Invoice')?></h1><br />
-                <?php echo $_helper->__('Invoice Number: ') . 'INV-' . $_invoice->getIncrementId(); ?>
+                <?php echo $_helper->__('Invoice Number: ') . $_invoice->getIncrementId(); ?>
                 <br />
-                <?php echo $_helper->__('Invoice Date: '); ?>
+                <?php echo $_helper->__('Date: '); ?>
                 <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAt(), 'medium', false); ?>
             </td>
         </tr>
@@ -363,14 +363,10 @@ $i = 0;
     <table class="products" cellpadding="0" cellspacing="0" style="margin-top: 1.5cm;">
         <thead>
         <tr>
-            <th rowspan="2"><?php echo $_helper->__('Products'); ?></th>
-            <th colspan="2"><?php echo $_helper->__('Sub-Item'); ?></th>
-            <th rowspan="2"><?php echo $_helper->__('Price'); ?></th>
-            <th rowspan="2"><?php echo $_helper->__('Discount'); ?></th>
-        </tr>
-        <tr>
-            <th><?php echo $_helper->__('Price'); ?></td>
-            <th><?php echo $_helper->__('Discount'); ?></td>
+            <th><?php echo $_helper->__('Products'); ?></th>
+            <th><?php echo $_helper->__('Qty'); ?></th>
+            <th><?php echo $_helper->__('Unit Price'); ?></th>
+            <th><?php echo $_helper->__('Price'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -384,7 +380,7 @@ $i = 0;
                 ?>
                 <?php if(!empty($productOptions['attributes_info'])): ?>
                     <td>
-                        <?php echo (int)$_item->getQty() ." x ". $_item->getName();?>
+                        <?php echo $_item->getName();?>
                         <?php foreach($productOptions['attributes_info'] as $productOption):?>
                             <br />
                             <span class="product-options">
@@ -394,32 +390,21 @@ $i = 0;
                         <?php endforeach;?>
                     </td>
                 <?php else: ?>
-                    <td><?php echo (int)$_item->getQty() ." x ". $_item->getName() ?></td>
+                    <td><?php echo $_item->getName() ?></td>
                 <?php endif;?>
 
-                <td style="text-align: right;">-----</td>
-                <td style="text-align: right;">-----</td>
-                <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getItemTotal() - $_item->getFxCostTotal()); ?></td>
-                <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getItemDiscountTotal()); ?></td>
+                <td style="text-align: right;"><?php echo (int)$_item->getQty() ?></td>
+                <td style="text-align: right;"><?php echo Mage::helper('core')->currency(($_item->getItemTotal() - $_item->getFxCostTotal() - $_item->getItemDiscountTotal()) / $_item->getQty()); ?></td>
+                <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getItemTotal() - $_item->getFxCostTotal() - $_item->getItemDiscountTotal()); ?></td>
             </tr>
             <?php foreach($_item->getChildrenItems() as $_childItem): ?>
                 <tr class="<?php echo $grayRow ? 'gray' : ""; ?>">
-                    <td style="padding-left: 1cm"><?php echo ($_childItem->getRowTotal() ? (int)$_childItem->getQty() . " x " : "") . $_childItem->getName() ?></td>
-                    <td style="text-align: right;"><?php echo $_childItem->getRowTotal() ? Mage::helper('core')->currency($_childItem->getRowTotal() - $_childItem->getFxCost()) : ""; ?></td>
-                    <td style="text-align: right;"><?php echo $_childItem->getRowTotal() ? Mage::helper('core')->currency($_childItem->getDiscountAmount()) : ""; ?></td>
+                <td style="padding-left: 1cm"><?php echo ($_childItem->getRowTotal() ? $_helper->getQtyString($_childItem->getQty()/$_item->getQty()) : "") . $_childItem->getName() ?></td>
+                    <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
                 </tr>
             <?php endforeach; ?>
-            <?php if ($_item->getFxCostTotal() and $_item->getItemTotal() == $_item->getRowTotal()): ?>
-                <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The Rest -->
-                    <td style="padding-left: 1cm"><?php echo $_item->getOrderItem()->getNonTopupValueLabel() ?: $_helper->__('SIM fee'); ?></td>
-                    <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getItemTotal() - $_item->getFxCostTotal())?></td>
-                    <td style="text-align: right;"><?php echo $_item->getRowTotal() ? Mage::helper('core')->currency($_item->getDiscountAmount()) : ""; // See assumption 1?></td>
-                    <td style="text-align: right;"></td>
-                    <td style="text-align: right;"></td>
-                </tr>
-            <?php endif; ?>
         <?php endforeach; ?>
         </tbody>
     </table>
@@ -495,7 +480,7 @@ $i = 0;
             </td>
             <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
                 <h1><?php echo $_helper->__('Money Receipt')?></h1><br />
-                <?php echo $_helper->__('Invoice Date: '); ?>
+                <?php echo $_helper->__('Date: '); ?>
                 <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAt(), 'medium', false); ?>
             </td>
         </tr>
@@ -548,14 +533,10 @@ $i = 0;
     <table class="products" cellpadding="0" cellspacing="0" style="margin-top: 1.5cm;">
         <thead>
         <tr>
-            <th rowspan="2"><?php echo $_helper->__('Item'); ?></th>
-            <th colspan="2"><?php echo $_helper->__('Sub-Item'); ?></th>
-            <th rowspan="2"><?php echo $_helper->__('Amount'); ?></th>
-            <th rowspan="2"><?php echo $_helper->__('Discount'); ?></th>
-        </tr>
-        <tr>
-            <th><?php echo $_helper->__('Amount'); ?></td>
-            <th><?php echo $_helper->__('Discount'); ?></td>
+            <th><?php echo $_helper->__('Item'); ?></th>
+            <th><?php echo $_helper->__('Qty'); ?></th>
+            <th><?php echo $_helper->__('Amount per Unit'); ?></th>
+            <th><?php echo $_helper->__('Amount'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -563,50 +544,32 @@ $i = 0;
         <?php /* @var $_item Mage_Sales_Model_Order_Invoice_Item */?>
         <?php foreach($invoiceItems as $_item): ?>
             <?php $grayRow = ! $grayRow; ?>
-            <tr class="<?php echo $grayRow ? 'gray' : ""; ?> parent-product">
-                <?php
-                $productOptions = $_item->getOrderItem()->getProductOptions();
-                ?>
-                <?php if(!empty($productOptions['attributes_info'])): ?>
+            <?php if ($_item->getFxCost()): ?>
+                <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
                     <td>
-                        <?php echo (int)$_item->getQty() ." x ". $_item->getName();?>
-                        <?php foreach($productOptions['attributes_info'] as $productOption):?>
-                            <br />
-                            <span class="product-options">
-                                <i><?php echo $productOption['label']?></i><br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;<?php echo $productOption['value'];?>
-                            </span>
-                        <?php endforeach;?>
+                        <b><?php echo $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_item->getTopupFxCost(), $_item->getFxr()->getCurrencySymbol(), $_item->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_item->getFxr()->getCurrencySymbol()); ?></b>(*)
+                        <br />
+                        <small style="padding-left: 1cm;">&nbsp;&nbsp;**<?php echo $_helper->__(' for ') . $_item->getName() ?></small>
                     </td>
-                <?php else: ?>
-                    <td><?php echo (int)$_item->getQty() ." x ". $_item->getName() ?></td>
-                <?php endif;?>
-
-                <td style="text-align: right;">-----</td>
-                <td style="text-align: right;">-----</td>
-                <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getFxCostTotal()); ?></td>
-                <td style="text-align: right;"><?php echo Mage::helper('core')->currency(0); ?></td>
-            </tr>
+                    <td style="text-align: right;"><?php echo (int)$_item->getQty() ?></td>
+                    <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getFxCostTotal() / $_item->getQty()); ?></td>
+                    <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getFxCostTotal()); ?></td>
+                </tr>
+            <?php endif; ?>
             <?php foreach($_item->getChildrenItems() as $_childItem): ?>
                 <?php if ($_childItem->getFxCost()): ?>
                     <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
-                        <td style="padding-left: 1.5cm">(*) <?php echo (int)$_item->getQty() ." x ". $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_childItem->getTopupFxCost(), $_childItem->getFxr()->getCurrencySymbol(), $_childItem->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_childItem->getFxr()->getCurrencySymbol()); ?></td>
-                        <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_childItem->getFxCost())?></td>
-                        <td style="text-align: right;"><?php echo Mage::helper('core')->currency(0)?></td>
-                        <td style="text-align: right;"></td>
-                        <td style="text-align: right;"></td>
+                        <td>
+                            <?php echo $_helper->getQtyString($_childItem->getQty()/$_item->getQty()) . $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_childItem->getTopupFxCost(), $_childItem->getFxr()->getCurrencySymbol(), $_childItem->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_childItem->getFxr()->getCurrencySymbol()); ?>(*)
+                            <br />
+                            <small style="padding-left: 1cm;">&nbsp;&nbsp;**<?php echo $_helper->__(' for ') . $_item->getName() ?></small>
+                        </td>
+                        <td style="text-align: right;"><?php echo (int)$_childItem->getQty() ?></td>
+                        <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_childItem->getFxCost() / $_item->getQty()); ?></td>
+                        <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_childItem->getFxCost()); ?></td>
                     </tr>
                 <?php endif; ?>
             <?php endforeach; ?>
-            <?php if ($_item->getFxCost()): ?>
-                <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
-                    <td style="padding-left: 1cm">(*) <?php echo (int)$_item->getQty() ." x ". $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_item->getTopupFxCost(), $_item->getFxr()->getCurrencySymbol(), $_item->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_item->getFxr()->getCurrencySymbol()); ?></td>
-                    <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getFxCost())?></td>
-                    <td style="text-align: right;"><?php echo Mage::helper('core')->currency(0)?></td>
-                    <td style="text-align: right;"></td>
-                    <td style="text-align: right;"></td>
-                </tr>
-            <?php endif; ?>
         <?php endforeach; ?>
         </tbody>
     </table>
@@ -665,7 +628,7 @@ $i = 0;
             </td>
             <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
                 <h1><?php echo $_helper->__('Deposit Receipt')?></h1><br />
-                <?php echo $_helper->__('Invoice Date: '); ?>
+                <?php echo $_helper->__('Date: '); ?>
                 <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAt(), 'medium', false); ?>
             </td>
         </tr>
@@ -720,9 +683,8 @@ $i = 0;
         <tr>
             <th><?php echo $_helper->__('Product Deposit Detail'); ?></th>
             <th style="text-align: right;"><?php echo $_helper->__('Qty'); ?></th>
+            <th style="text-align: right;"><?php echo $_helper->__('Deposit Amount per Unit'); ?></th>
             <th style="text-align: right;"><?php echo $_helper->__('Deposit Amount'); ?></th>
-            <th style="text-align: right;"><?php echo $_helper->__('Discount'); ?></th>
-            <th style="text-align: right;"><?php echo $_helper->__('Subtotal'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -736,11 +698,10 @@ $i = 0;
                 $itemName = $_item->getName();
             }
             ?>
-            <tr class="<?php echo $grayRow ? 'gray' : ""; ?>">
+            <tr class="<?php echo $grayRow ? 'gray' : ""; ?> parent-product">
                 <td><?php echo $itemName ?></td>
                 <td style="text-align: right;"><?php echo (int)$_item->getQty() ?></td>
-                <td style="text-align: right;"><?php echo $_item->getRowTotal() ? Mage::helper('core')->currency($_item->getRowTotal()) : ""; ?></td>
-                <td style="text-align: right;"><?php echo $_item->getRowTotal() ? Mage::helper('core')->currency($_item->getDiscountAmount()) : ""; ?></td>
+                <td style="text-align: right;"><?php echo $_item->getRowTotal() ? Mage::helper('core')->currency(($_item->getRowTotal() - $_item->getDiscountAmount()) / $_item->getQty()) : ""; ?></td>
                 <td style="text-align: right;"><?php echo $_item->getRowTotal() ? Mage::helper('core')->currency($_item->getRowTotal() - $_item->getDiscountAmount()) : ""; ?></td>
             </tr>
         <?php endforeach; ?>
