@@ -1,5 +1,5 @@
 <?php
-$_temp_dir = Mage::getBaseDir('var') . DIRECTORY_SEPARATOR . 'tmp';
+$_temp_dir = Mage::getBaseDir('var') . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
 if (! file_exists($_temp_dir)) {
     mkdir($_temp_dir, 0777);
 }
