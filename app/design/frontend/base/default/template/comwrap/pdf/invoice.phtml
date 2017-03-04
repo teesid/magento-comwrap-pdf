@@ -435,7 +435,7 @@ $i = 0;
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('VAT')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency(0.07 * ($_invoice->getGrandTotal() - $_invoice->getShippingInclTax() - $depositGrandTotal - $fxCostGrandTotal))?></td>
+        <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency((0.07/1.07) * ($_invoice->getGrandTotal() - $_invoice->getShippingInclTax() - $depositGrandTotal - $fxCostGrandTotal))?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
