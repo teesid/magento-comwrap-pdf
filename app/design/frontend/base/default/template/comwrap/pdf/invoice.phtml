@@ -294,6 +294,7 @@ $i = 0;
         $lastParentItem->setItemDiscountTotal($lastParentItemDiscountTotal);
         $invoiceItems[] = $lastParentItem;
     }
+    $fxCostGrandTotal = round($fxCostGrandTotal, 2);
     $taxableGrandTotalExclTax = round((0.07/1.07) * ($_invoice->getGrandTotal() - $depositGrandTotal - $fxCostGrandTotal), 2);
     $taxGrandTotal = $_invoice->getGrandTotal() - $depositGrandTotal - $fxCostGrandTotal - $taxableGrandTotalExclTax;
     ?>
@@ -549,7 +550,7 @@ $i = 0;
             <?php if ($_item->getFxCost()): ?>
                 <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
                     <td>
-                        <b><?php echo $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_item->getTopupFxCost(), $_item->getFxr()->getCurrencySymbol(), $_item->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_item->getFxr()->getCurrencySymbol()); ?></b>(*)
+                        <b><?php echo $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.4f %4$s/%5$s', $_item->getTopupFxCost(), $_item->getFxr()->getCurrencySymbol(), $_item->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_item->getFxr()->getCurrencySymbol()); ?></b>(*)
                         <br />
                         <small style="padding-left: 1cm;">&nbsp;&nbsp;**<?php echo $_helper->__(' for ') . $_item->getName() ?></small>
                     </td>
@@ -562,7 +563,7 @@ $i = 0;
                 <?php if ($_childItem->getFxCost()): ?>
                     <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
                         <td>
-                            <?php echo $_helper->getQtyString($_childItem->getQty()/$_item->getQty()) . $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s', $_childItem->getTopupFxCost(), $_childItem->getFxr()->getCurrencySymbol(), $_childItem->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_childItem->getFxr()->getCurrencySymbol()); ?>(*)
+                            <?php echo $_helper->getQtyString($_childItem->getQty()/$_item->getQty()) . $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.4f %4$s/%5$s', $_childItem->getTopupFxCost(), $_childItem->getFxr()->getCurrencySymbol(), $_childItem->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_childItem->getFxr()->getCurrencySymbol()); ?>(*)
                             <br />
                             <small style="padding-left: 1cm;">&nbsp;&nbsp;**<?php echo $_helper->__(' for ') . $_item->getName() ?></small>
                         </td>
