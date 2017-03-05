@@ -269,7 +269,7 @@ $i = 0;
             $_item->setFxr($fxr);
             $_item->setFxd($fxd);
             $_item->setTopupFxCost($topupFxCost);
-            $_item->setFxCost($_item->getQty() * $_item->getTopupFxCost() * $fxd->getExchangeRate());
+            $_item->setFxCost(round($_item->getQty() * $_item->getTopupFxCost() * $fxd->getExchangeRate(), 2));
 
             if ($_item->getFxCost()) {
                 $topupItems[] = $_item;
@@ -294,7 +294,6 @@ $i = 0;
         $lastParentItem->setItemDiscountTotal($lastParentItemDiscountTotal);
         $invoiceItems[] = $lastParentItem;
     }
-    $fxCostGrandTotal = round($fxCostGrandTotal, 2);
     $taxableGrandTotalExclTax = round((0.07/1.07) * ($_invoice->getGrandTotal() - $depositGrandTotal - $fxCostGrandTotal), 2);
     $taxGrandTotal = $_invoice->getGrandTotal() - $depositGrandTotal - $fxCostGrandTotal - $taxableGrandTotalExclTax;
     ?>
