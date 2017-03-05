@@ -294,6 +294,8 @@ $i = 0;
         $lastParentItem->setItemDiscountTotal($lastParentItemDiscountTotal);
         $invoiceItems[] = $lastParentItem;
     }
+    $taxableGrandTotalExclTax = round((0.07/1.07) * ($_invoice->getGrandTotal() - $depositGrandTotal - $fxCostGrandTotal), 2);
+    $taxGrandTotal = $_invoice->getGrandTotal() - $depositGrandTotal - $fxCostGrandTotal - $taxableGrandTotalExclTax;
     ?>
 
     <table class="no-border" style="margin-bottom: 1cm;">
@@ -425,17 +427,17 @@ $i = 0;
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Grand Total')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getGrandTotal() - $_invoice->getShippingInclTax() - $depositGrandTotal - $fxCostGrandTotal)?></td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getGrandTotal() - $depositGrandTotal - $fxCostGrandTotal)?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Grand Total Excl. VAT')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency(0.93 * ($_invoice->getGrandTotal() - $_invoice->getShippingInclTax() - $depositGrandTotal - $fxCostGrandTotal))?></td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($taxGrandTotal)?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('VAT')?>:</td>
-        <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency((0.07/1.07) * ($_invoice->getGrandTotal() - $_invoice->getShippingInclTax() - $depositGrandTotal - $fxCostGrandTotal))?></td>
+        <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($taxableGrandTotalExclTax)?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
