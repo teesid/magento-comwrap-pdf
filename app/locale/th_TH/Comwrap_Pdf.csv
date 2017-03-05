@@ -3,7 +3,7 @@
 "Discount (%s)","อื่น ๆ (%s)"
 "Collector","ผู้รับเงิน"
 "RECEIPT","ใบสำคัญรับเงิน (ไม่ใช่บิลเงินสด)"
-"Credit value of %1$.2f %2$s at the exchange rate %3$.2f %4$s/%5$s","เครติตมูลค่า %1$.2f %2$s ที่อัตราแลกเปลี่ยน %3$.2f %4$s/%5$s"
+"Credit value of %1$.2f %2$s at the exchange rate %3$.4f %4$s/%5$s","เครติตมูลค่า %1$.2f %2$s ที่อัตราแลกเปลี่ยน %3$.4f %4$s/%5$s"
 "SIM fee","ค่าซิมการ์ด"
 "Product Deposit Detail","รายละเอียดค่ามัดจำสินค้า"
 "Deposit Amount","ค่ามัดจำ"
