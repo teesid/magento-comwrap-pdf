@@ -67,6 +67,7 @@ $svgLogo = <<<EOSVG
 </svg>
 EOSVG;
 $_helper = Mage::helper('comwrap_pdf');
+$_instasim_helper = Mage::helper('instasim_topupproduct');
 
 $i = 0;
 ?>
@@ -173,129 +174,7 @@ $i = 0;
     <?php
 
     $this->setOrder($_invoice->getOrder());
-
-    /* 
-     * ASSUMPTION 1:
-     *   The price are either exclusively in the parent or children rows only.
-     */
-
-    /*
-     * The invoice item collection looks like
-     *   Parent Item 1
-     *   Child Item 1.1
-     *   Child Item 1.2
-     *   Parent Item 2
-     *   Child Item 2.1
-     *   Child Item 2.2
-     *    .
-     *    .
-     *    .
-     * .
-     * From the above we make something like 
-     *   array(
-     *     parent_item_1 => array(child_item_1.1, ...)
-     *     parent_item_2 => array(child_item_2.1, ...)
-     *     ...
-     */
-    $invoiceItems = array();
-    $lastParentItem = null;
-    $lastParentItemDeposit = 0;
-    $lastParentItemFxCostTotal = 0;
-    $lastParentItemTotal = 0;
-    $lastParentItemDiscountTotal = 0;
-    $lastChildrenList = array();
-
-    $depositItems = array();
-    $topupItems = array();
-    $depositGrandTotal = 0;
-    $fxCostGrandTotal = 0;
-
-    foreach($_invoice->getItemsCollection() as $_item) {
-        if (
-            (strpos($_item->getSku(), 'deposit') !== false)
-            and ($_item->getOrderItem()->getParentItem())
-        ) {
-            // See assumption 1 above
-            if ($lastParentItem->getRowTotal()) {
-                $p = Mage::getModel('catalog/product')->load($_item->getProductId());
-                $_item->setRowTotal($p->getPrice() * $_item->getQty());
-            } else {
-                $lastParentItemTotal += $_item->getRowTotal();
-                $lastParentItemDiscountTotal += $_item->getDiscountAmount();
-            }
-            $lastParentItemDeposit += $_item->getRowTotal() - $_item->getDiscountAmount();
-            $depositGrandTotal += $_item->getRowTotal() - $_item->getDiscountAmount();
-            $depositItems[] = $_item;            
-            continue;
-        }
-
-        if ($_item->getOrderItem()->getParentItem()) {
-            $lastChildrenList[] = $_item;
-        } else {
-            if ($lastParentItem) {
-                $lastParentItem->setChildrenItems($lastChildrenList);
-                // the parent price is either null/0 or the whole price
-                $lastParentItem->setRowTotal(max(
-                    0,
-                    $lastParentItem->getRowTotal() - $lastParentItemDeposit
-                ));
-                $lastParentItem->setFxCostTotal($lastParentItemFxCostTotal);
-                $fxCostGrandTotal += $lastParentItemFxCostTotal;
-                $lastParentItem->setItemTotal($lastParentItemTotal - $lastParentItemDeposit);
-                $lastParentItem->setItemDiscountTotal($lastParentItemDiscountTotal);
-                $invoiceItems[] = $lastParentItem;
-            }
-            $lastParentItem = $_item;
-            $lastParentItemDeposit = 0;
-            $lastParentItemFxCostTotal = 0;
-            $lastParentItemTotal = 0;
-            $lastParentItemDiscountTotal = 0;
-            $lastChildrenList = array();
-        }
-
-        if ($_item->getOrderItem()->getTopupUseFxReserve()) {
-            $_quoteItem = Mage::getModel('sales/quote_item')->load($_item->getOrderItem()->getQuoteItemId());
-            if ($_quoteItem->getId()) {
-                $fxd = Mage::getModel('instasim_topupproduct/deposit')->load($_quoteItem->getTopupFxDeposit());
-            } else {
-                // TOTO: Eventually we should only use this case of the if block
-                $fxd = Mage::getModel('instasim_topupproduct/deposit')->load($_item->getOrderItem()->getTopupFxDeposit());
-            }
-
-            $fxr = Mage::getModel('instasim_topupproduct/fxreserve')->load($_item->getOrderItem()->getTopupFxReserve());
-            $topupFxCost = $_item->getOrderItem()->getTopupFxCost();
-
-            $_item->setUseFxr(1);
-            $_item->setFxr($fxr);
-            $_item->setFxd($fxd);
-            $_item->setTopupFxCost($topupFxCost);
-            $_item->setFxCost(round($_item->getQty() * $_item->getTopupFxCost() * $fxd->getExchangeRate(), 2));
-
-            if ($_item->getFxCost()) {
-                $topupItems[] = $_item;
-                $lastParentItemFxCostTotal += $_item->getFxCost();
-            }
-        }
-
-        $lastParentItemTotal += $_item->getRowTotal();
-        // See assumption 1
-        $lastParentItemDiscountTotal += $_item->getDiscountAmount();
-    }
-    if ($lastParentItem) {
-        $lastParentItem->setChildrenItems($lastChildrenList);
-        // the parent price is either null/0 or the whole price
-        $lastParentItem->setRowTotal(max(
-            0,
-            $lastParentItem->getRowTotal() - $lastParentItemDeposit
-        ));
-        $lastParentItem->setFxCostTotal($lastParentItemFxCostTotal);
-        $fxCostGrandTotal += $lastParentItemFxCostTotal;
-        $lastParentItem->setItemTotal($lastParentItemTotal - $lastParentItemDeposit);
-        $lastParentItem->setItemDiscountTotal($lastParentItemDiscountTotal);
-        $invoiceItems[] = $lastParentItem;
-    }
-    $taxableGrandTotalExclTax = round((0.07/1.07) * ($_invoice->getGrandTotal() - $depositGrandTotal - $fxCostGrandTotal), 2);
-    $taxGrandTotal = $_invoice->getGrandTotal() - $depositGrandTotal - $fxCostGrandTotal - $taxableGrandTotalExclTax;
+    $_invoiceExt = $_instasim_helper->getAbstractInvoiceItemTree($_invoice);
     ?>
 
     <table class="no-border" style="margin-bottom: 1cm;">
@@ -305,7 +184,10 @@ $i = 0;
             </td>
             <td style="width: 52%; height: 3cm; overflow: hidden;">
                 <?php
-                    echo $this->getLayout()->createBlock('cms/block')->setBlockId('store_billing_contact')->toHtml(); 
+                    echo $this->getLayout()->createBlock('cms/block')
+                        ->setStoreId($_invoice->getStoreId())
+                        ->setBlockId('store_billing_contact')
+                        ->toHtml(); 
                 ?>
             </td>
             <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
@@ -313,7 +195,7 @@ $i = 0;
                 <?php echo $_helper->__('Invoice Number: ') . $_invoice->getIncrementId(); ?>
                 <br />
                 <?php echo $_helper->__('Date: '); ?>
-                <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAt(), 'medium', false); ?>
+                <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAtStoreDate(), 'medium', false); ?>
             </td>
         </tr>
     </table>
@@ -374,7 +256,7 @@ $i = 0;
         <tbody>
         <?php $grayRow = true; ?>
         <?php /* @var $_item Mage_Sales_Model_Order_Invoice_Item */?>
-        <?php foreach($invoiceItems as $_item): ?>
+        <?php foreach($_invoiceExt->getParentItems() as $_item): ?>
             <?php $grayRow = ! $grayRow; ?>
             <tr class="<?php echo $grayRow ? 'gray' : ""; ?> parent-product">
                 <?php
@@ -417,27 +299,27 @@ $i = 0;
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Subtotal');?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getGrandTotal() - $_invoice->getShippingInclTax() - $depositGrandTotal - $fxCostGrandTotal)?></td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getGrandTotal() - $_invoiceExt->getShippingInclTax() - $_invoiceExt->getDepositGrandTotal() - $_invoiceExt->getFxCostGrandTotal())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Shipping & Handling')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getShippingInclTax())?></td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getShippingInclTax())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Grand Total')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoice->getGrandTotal() - $depositGrandTotal - $fxCostGrandTotal)?></td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getGrandTotal() - $_invoiceExt->getDepositGrandTotal() - $_invoiceExt->getFxCostGrandTotal())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Grand Total Excl. VAT')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($taxGrandTotal)?></td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getTaxGrandTotal())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('VAT')?>:</td>
-        <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($taxableGrandTotalExclTax)?></td>
+        <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getTaxableGrandTotalExclTax())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
@@ -467,7 +349,7 @@ $i = 0;
         </tr>
         </tbody>
     </table>
-    <?php if ($topupItems): ?>
+    <?php if ($_invoiceExt->getTopupItems()): ?>
     <?php /* BEGIN TOPUP RECEIPT {{{ */ ?>
     <pagebreak />
     <table class="no-border" style="margin-bottom: 1cm;">
@@ -483,7 +365,7 @@ $i = 0;
             <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
                 <h1><?php echo $_helper->__('Money Receipt')?></h1><br />
                 <?php echo $_helper->__('Date: '); ?>
-                <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAt(), 'medium', false); ?>
+                <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAtStoreDate(), 'medium', false); ?>
             </td>
         </tr>
     </table>
@@ -544,7 +426,7 @@ $i = 0;
         <tbody>
         <?php $grayRow = true; ?>
         <?php /* @var $_item Mage_Sales_Model_Order_Invoice_Item */?>
-        <?php foreach($invoiceItems as $_item): ?>
+        <?php foreach($_invoiceExt->getParentItems() as $_item): ?>
             <?php $grayRow = ! $grayRow; ?>
             <?php if ($_item->getFxCost()): ?>
                 <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
@@ -582,7 +464,7 @@ $i = 0;
         <tr>
             <td style="width: 60%">&nbsp;</td>
             <td style="text-align: right; width: 25%;"><?php echo $_helper->__('Grand Total')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($fxCostGrandTotal)?></td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getFxCostGrandTotal())?></td>
         </tr>
         <tr>
             <td style="width: 60%">&nbsp;</td>
@@ -615,7 +497,7 @@ $i = 0;
     * <?php echo $_helper->__("The exchange rate is based on the bank's rate on the date the company transacted the exchange and not necessarily the rate on the order date.") ?>
     <?php /* }}} END TOPUP RECEIPT */ ?>
     <?php endif; ?>
-    <?php if ($depositItems): ?>
+    <?php if ($_invoiceExt->getDepositItems()): ?>
     <?php /* BEGIN DEPOSIT RECEIPT {{{ */ ?>
     <pagebreak />
     <table class="no-border" style="margin-bottom: 1cm;">
@@ -631,7 +513,7 @@ $i = 0;
             <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
                 <h1><?php echo $_helper->__('Deposit Receipt')?></h1><br />
                 <?php echo $_helper->__('Date: '); ?>
-                <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAt(), 'medium', false); ?>
+                <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAtStoreDate(), 'medium', false); ?>
             </td>
         </tr>
     </table>
@@ -692,7 +574,7 @@ $i = 0;
         <tbody>
         <?php /* @var $_item Mage_Sales_Model_Order_Invoice_Item */?>
         <?php $grayRow = true; ?>
-        <?php foreach($depositItems as $_item): ?>
+        <?php foreach($_invoiceExt->getDepositItems() as $_item): ?>
             <?php $grayRow = ! $grayRow; ?>
             <?php if ($pi = $_item->getOrderItem()->getParentItem()) {
                 $itemName = $pi->getName();
@@ -716,7 +598,7 @@ $i = 0;
         <tr>
             <td style="width: 60%">&nbsp;</td>
             <td style="text-align: right; width: 25%;"><?php echo $_helper->__('Grand Total')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($depositGrandTotal)?></td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getDepositGrandTotal())?></td>
         </tr>
         <tr>
             <td style="width: 60%">&nbsp;</td>
