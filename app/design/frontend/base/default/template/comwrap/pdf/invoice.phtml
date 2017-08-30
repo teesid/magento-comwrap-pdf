@@ -68,6 +68,7 @@ $svgLogo = <<<EOSVG
 EOSVG;
 $_helper = Mage::helper('comwrap_pdf');
 $_instasim_helper = Mage::helper('instasim_topupproduct');
+$_include_receipts = Mage::registry('instasim_include_receipts');
 
 $i = 0;
 ?>
@@ -349,7 +350,7 @@ $i = 0;
         </tr>
         </tbody>
     </table>
-    <?php if ($_invoiceExt->getTopupItems()): ?>
+    <?php if ($_include_receipts && $_invoiceExt->getTopupItems()): ?>
     <?php /* BEGIN TOPUP RECEIPT {{{ */ ?>
     <pagebreak />
     <table class="no-border" style="margin-bottom: 1cm;">
@@ -497,7 +498,7 @@ $i = 0;
     * <?php echo $_helper->__("The exchange rate is based on the bank's rate on the date the company transacted the exchange and not necessarily the rate on the order date.") ?>
     <?php /* }}} END TOPUP RECEIPT */ ?>
     <?php endif; ?>
-    <?php if ($_invoiceExt->getDepositItems()): ?>
+    <?php if ($_include_receipts && $_invoiceExt->getDepositItems()): ?>
     <?php /* BEGIN DEPOSIT RECEIPT {{{ */ ?>
     <pagebreak />
     <table class="no-border" style="margin-bottom: 1cm;">
