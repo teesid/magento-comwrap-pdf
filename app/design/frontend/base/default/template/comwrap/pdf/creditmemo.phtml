@@ -401,7 +401,7 @@ $i = 0;
             </tr>
             <?php foreach($_item->getChildrenItems() as $_childItem): ?>
                 <tr class="<?php echo $grayRow ? 'gray' : ""; ?>">
-                <td style="padding-left: 1cm"><?php echo ($_childItem->getRowTotal() ? $_helper->getQtyString($_childItem->getQty()/$_item->getQty()) : "") . $_childItem->getName() ?></td>
+                <td style="padding-left: 1cm"><?php echo $_helper->getQtyString($_childItem->getQty()/$_item->getQty()). $_childItem->getName() ?></td>
                     <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
