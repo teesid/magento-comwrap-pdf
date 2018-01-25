@@ -192,10 +192,10 @@ $i = 0;
                 ?>
             </td>
             <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
-                <h1><?php echo $_helper->__('Invoice')?></h1><br />
-                <?php echo $_helper->__('Invoice Number: ') . $_invoice->getIncrementId(); ?>
+                <h1><?php echo $_helper->__('ใบกำกับภาษี/ใบเสร็จรับเงิน')?></h1><br />
+                <?php echo $_helper->__('เลขที่ใบกำกับภาษี: ') . $_invoice->getIncrementId(); ?>
                 <br />
-                <?php echo $_helper->__('Date: '); ?>
+                <?php echo $_helper->__('วันที่: '); ?>
                 <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAtStoreDate(), 'medium', false); ?>
             </td>
         </tr>
@@ -205,7 +205,7 @@ $i = 0;
         <tr>
             <td style="text-align: right; width: 13%; height: 3cm; overflow: hidden;">
                 <div style="position: absolute; rotate: -90; left: 10%; text-align: center; font-size: 70%;">
-                    <?php echo $_helper->__('Order # ')?>
+                    <?php echo $_helper->__('เลขคำสั่งซื้อ ')?>
                     <br />
                     <barcode code="<?php echo $_invoice->getOrder()->getIncrementId()?>" type="C128A" size="0.5" />
                     <br />
@@ -248,10 +248,10 @@ $i = 0;
     <table class="products" cellpadding="0" cellspacing="0" style="margin-top: 1.5cm;">
         <thead>
         <tr>
-            <th><?php echo $_helper->__('Products'); ?></th>
-            <th><?php echo $_helper->__('Qty'); ?></th>
-            <th><?php echo $_helper->__('Unit Price'); ?></th>
-            <th><?php echo $_helper->__('Price'); ?></th>
+            <th><?php echo $_helper->__('สินค้า'); ?></th>
+            <th><?php echo $_helper->__('จำนวน'); ?></th>
+            <th><?php echo $_helper->__('ราคาต่อหน่วย'); ?></th>
+            <th><?php echo $_helper->__('ราคา'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -299,27 +299,27 @@ $i = 0;
         <tbody>
         <tr>
             <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Subtotal');?>:</td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('รวม');?>:</td>
             <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getGrandTotal() - $_invoiceExt->getShippingInclTax() - $_invoiceExt->getDepositGrandTotal() - $_invoiceExt->getFxCostGrandTotal())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Shipping & Handling')?>:</td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('การจัดการและขนส่งสินค้า')?>:</td>
             <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getShippingInclTax())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Grand Total')?>:</td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('รวมทั้งหมด')?>:</td>
             <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getGrandTotal() - $_invoiceExt->getDepositGrandTotal() - $_invoiceExt->getFxCostGrandTotal())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Grand Total Excl. VAT')?>:</td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('รวมค่าสินค้าก่อนภาษีมูลค่าเพิ่ม')?>:</td>
             <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getTaxGrandTotal())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('VAT')?>:</td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('ภาษีมูลค่าเพิ่ม')?>:</td>
         <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getTaxableGrandTotalExclTax())?></td>
         </tr>
         <tr>
@@ -337,7 +337,7 @@ $i = 0;
                     &nbsp;
                     &nbsp;
                     &nbsp;
-                    <?php echo $_helper->__('Collector')?>
+                    <?php echo $_helper->__('ผู้รับเงิน')?>
                     &nbsp;
                     &nbsp;
                     &nbsp;
@@ -364,8 +364,8 @@ $i = 0;
                 ?>
             </td>
             <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
-                <h1><?php echo $_helper->__('Money Receipt')?></h1><br />
-                <?php echo $_helper->__('Date: '); ?>
+                <h1><?php echo $_helper->__('ใบรับเงิน')?></h1><br />
+                <?php echo $_helper->__('วันที่: '); ?>
                 <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAtStoreDate(), 'medium', false); ?>
             </td>
         </tr>
@@ -375,7 +375,7 @@ $i = 0;
         <tr>
             <td style="text-align: right; width: 13%; height: 3cm; overflow: hidden;">
                 <div style="position: absolute; rotate: -90; left: 10%; text-align: center; font-size: 70%;">
-                    <?php echo $_helper->__('Order # ')?>
+                    <?php echo $_helper->__('เลขคำสั่งซื้อ ')?>
                     <br />
                     <barcode code="<?php echo $_invoice->getOrder()->getIncrementId()?>" type="C128A" size="0.5" />
                     <br />
@@ -418,10 +418,10 @@ $i = 0;
     <table class="products" cellpadding="0" cellspacing="0" style="margin-top: 1.5cm;">
         <thead>
         <tr>
-            <th><?php echo $_helper->__('Item'); ?></th>
-            <th><?php echo $_helper->__('Qty'); ?></th>
-            <th><?php echo $_helper->__('Amount per Unit'); ?></th>
-            <th><?php echo $_helper->__('Amount'); ?></th>
+            <th><?php echo $_helper->__('รายการ'); ?></th>
+            <th><?php echo $_helper->__('จำนวน'); ?></th>
+            <th><?php echo $_helper->__('ราคาต่อหน่วย'); ?></th>
+            <th><?php echo $_helper->__('ราคา'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -432,9 +432,9 @@ $i = 0;
             <?php if ($_item->getFxCost()): ?>
                 <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
                     <td>
-                        <b><?php echo $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.4f %4$s/%5$s', $_item->getTopupFxCost(), $_item->getFxr()->getCurrencySymbol(), $_item->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_item->getFxr()->getCurrencySymbol()); ?></b>(*)
+                        <b><?php echo $_helper->__('เครติตมูลค่า %1$.2f %2$s ที่อัตราแลกเปลี่ยน %3$.4f %4$s/%5$s', $_item->getTopupFxCost(), $_item->getFxr()->getCurrencySymbol(), $_item->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_item->getFxr()->getCurrencySymbol()); ?></b>(*)
                         <br />
-                        <small style="padding-left: 1cm;">&nbsp;&nbsp;**<?php echo $_helper->__(' for ') . $_item->getName() ?></small>
+                        <small style="padding-left: 1cm;">&nbsp;&nbsp;**<?php echo $_helper->__('สำหรับ') . $_item->getName() ?></small>
                     </td>
                     <td style="text-align: right;"><?php echo (int)$_item->getQty() ?></td>
                     <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getFxCostTotal() / $_item->getQty()); ?></td>
@@ -445,9 +445,9 @@ $i = 0;
                 <?php if ($_childItem->getFxCost()): ?>
                     <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
                         <td>
-                            <?php echo $_helper->getQtyString($_childItem->getQty()/$_item->getQty()) . $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.4f %4$s/%5$s', $_childItem->getTopupFxCost(), $_childItem->getFxr()->getCurrencySymbol(), $_childItem->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_childItem->getFxr()->getCurrencySymbol()); ?>(*)
+                            <?php echo $_helper->getQtyString($_childItem->getQty()/$_item->getQty()) . $_helper->__('เครติตมูลค่า %1$.2f %2$s ที่อัตราแลกเปลี่ยน %3$.4f %4$s/%5$s', $_childItem->getTopupFxCost(), $_childItem->getFxr()->getCurrencySymbol(), $_childItem->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_childItem->getFxr()->getCurrencySymbol()); ?>(*)
                             <br />
-                            <small style="padding-left: 1cm;">&nbsp;&nbsp;**<?php echo $_helper->__(' for ') . $_item->getName() ?></small>
+                            <small style="padding-left: 1cm;">&nbsp;&nbsp;**<?php echo $_helper->__('สำหรับ') . $_item->getName() ?></small>
                         </td>
                         <td style="text-align: right;"><?php echo (int)$_childItem->getQty() ?></td>
                         <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_childItem->getFxCost() / $_item->getQty()); ?></td>
@@ -464,7 +464,7 @@ $i = 0;
         <tbody>
         <tr>
             <td style="width: 60%">&nbsp;</td>
-            <td style="text-align: right; width: 25%;"><?php echo $_helper->__('Grand Total')?>:</td>
+            <td style="text-align: right; width: 25%;"><?php echo $_helper->__('รวมทั้งหมด')?>:</td>
             <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getFxCostGrandTotal())?></td>
         </tr>
         <tr>
@@ -482,7 +482,7 @@ $i = 0;
                     &nbsp;
                     &nbsp;
                     &nbsp;
-                    <?php echo $_helper->__('Collector')?>
+                    <?php echo $_helper->__('ผู้รับเงิน')?>
                     &nbsp;
                     &nbsp;
                     &nbsp;
@@ -495,7 +495,7 @@ $i = 0;
         </tr>
         </tbody>
     </table>
-    * <?php echo $_helper->__("The exchange rate is based on the bank's rate on the date the company transacted the exchange and not necessarily the rate on the order date.") ?>
+    * <?php echo $_helper->__("อ้างอิงจากอัตราแลกเปลี่ยนของธนาคาร ณ วันที่บริษัททำการแลกเปลี่ยนไว้แล้วและอาจไม่ตรงกับอัตราแลกเปลี่ยน ณ วันที่ทำการสั่งซื้อ") ?>
     <?php /* }}} END TOPUP RECEIPT */ ?>
     <?php endif; ?>
     <?php if ($_include_receipts && $_invoiceExt->getDepositItems()): ?>
@@ -512,8 +512,8 @@ $i = 0;
                 ?>
             </td>
             <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
-                <h1><?php echo $_helper->__('Deposit Receipt')?></h1><br />
-                <?php echo $_helper->__('Date: '); ?>
+                <h1><?php echo $_helper->__('ใบรับค่ามัดจำ')?></h1><br />
+                <?php echo $_helper->__('วันที่: '); ?>
                 <?php echo Mage::helper('core')->formatDate($_invoice->getCreatedAtStoreDate(), 'medium', false); ?>
             </td>
         </tr>
@@ -523,7 +523,7 @@ $i = 0;
         <tr>
             <td style="text-align: right; width: 13%; height: 3cm; overflow: hidden;">
                 <div style="position: absolute; rotate: -90; left: 10%; text-align: center; font-size: 70%;">
-                    <?php echo $_helper->__('Order # ')?>
+                    <?php echo $_helper->__('เลขคำสั่งซื้อ ')?>
                     <br />
                     <barcode code="<?php echo $_invoice->getOrder()->getIncrementId()?>" type="C128A" size="0.5" />
                     <br />
@@ -566,10 +566,10 @@ $i = 0;
     <table class="products" cellpadding="0" cellspacing="0" style="margin-top: 1.5cm;">
         <thead>
         <tr>
-            <th><?php echo $_helper->__('Product Deposit Detail'); ?></th>
-            <th style="text-align: right;"><?php echo $_helper->__('Qty'); ?></th>
-            <th style="text-align: right;"><?php echo $_helper->__('Deposit Amount per Unit'); ?></th>
-            <th style="text-align: right;"><?php echo $_helper->__('Deposit Amount'); ?></th>
+            <th><?php echo $_helper->__('รายละเอียดค่ามัดจำสินค้า'); ?></th>
+            <th style="text-align: right;"><?php echo $_helper->__('จำนวน'); ?></th>
+            <th style="text-align: right;"><?php echo $_helper->__('ค่ามัดจำต่อหน่วย'); ?></th>
+            <th style="text-align: right;"><?php echo $_helper->__('ค่ามัดจำ'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -598,7 +598,7 @@ $i = 0;
         <tbody>
         <tr>
             <td style="width: 60%">&nbsp;</td>
-            <td style="text-align: right; width: 25%;"><?php echo $_helper->__('Grand Total')?>:</td>
+            <td style="text-align: right; width: 25%;"><?php echo $_helper->__('รวมทั้งหมด')?>:</td>
             <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getDepositGrandTotal())?></td>
         </tr>
         <tr>
@@ -616,7 +616,7 @@ $i = 0;
                     &nbsp;
                     &nbsp;
                     &nbsp;
-                    <?php echo $_helper->__('Collector')?>
+                    <?php echo $_helper->__('ผู้รับเงิน')?>
                     &nbsp;
                     &nbsp;
                     &nbsp;
@@ -629,7 +629,7 @@ $i = 0;
         </tr>
         </tbody>
     </table>
-    * <?php echo $_helper->__('We will return the deposit amount after the goods has been returned to us within 3 working days in good condition.') ?>
+    * <?php echo $_helper->__('อินสตาซิมจะโอนคืนค่ามัดจำเต็มจำนวนคืนให้ลูกค้าภายใน 3 วันทำการหลังจากได้รับอุปกรณ์ครบถ้วนในสภาพสมบุรณ์') ?>
     <?php /* }}} END DEPOSIT RECEIPT */ ?>
     <?php endif; ?>
     <?php ++$i;?>
