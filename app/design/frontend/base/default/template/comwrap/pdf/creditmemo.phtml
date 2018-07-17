@@ -437,7 +437,49 @@ $i = 0;
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('VAT')?>:</td>
-        <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($taxableGrandTotalExclTax)?></td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($taxableGrandTotalExclTax)?></td>
+        </tr>
+        </tbody>
+    </table>
+    <table class="no-border totals" style="" cellpadding="0" cellspacing="0">
+        <tbody>
+        <tr>
+            <td style="width: 5%;">
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+            </td>
+            <td valign="top" style="width: 60%;"><?php echo $_helper->__('เหตุผลในการออกใบลดหนี้:');?><br/>
+                <?php foreach($_memo->getCommentsCollection() as $c) {
+                    if (! $c->getIsVisibleOnFront()) continue;
+                    echo $this->escapeHtml($c->getComment());
+                    echo "<br/>";
+                }?>
+            </td>
+            <td valign="bottom" style="text-align: center; width: 35%;">
+                <div class="collector-box">
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    <?php echo $_helper->__('ผู้อนุมัติ')?>
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                </div>
+            </td>
         </tr>
         </tbody>
     </table>
