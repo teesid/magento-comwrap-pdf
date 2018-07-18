@@ -67,6 +67,7 @@ $svgLogo = <<<EOSVG
 </svg>
 EOSVG;
 $_helper = Mage::helper('comwrap_pdf');
+$_instasim_helper = Mage::helper('instasim_topupproduct');
 
 $i = 0;
 ?>
@@ -172,130 +173,17 @@ $i = 0;
     <?php endif;?>
     <?php
 
-    $this->setOrder($_memo->getOrder());
-
-    /* 
-     * ASSUMPTION 1:
-     *   The price are either exclusively in the parent or children rows only.
-     */
-
-    /*
-     * The invoice item collection looks like
-     *   Parent Item 1
-     *   Child Item 1.1
-     *   Child Item 1.2
-     *   Parent Item 2
-     *   Child Item 2.1
-     *   Child Item 2.2
-     *    .
-     *    .
-     *    .
-     * .
-     * From the above we make something like 
-     *   array(
-     *     parent_item_1 => array(child_item_1.1, ...)
-     *     parent_item_2 => array(child_item_2.1, ...)
-     *     ...
-     */
-    $invoiceItems = array();
-    $lastParentItem = null;
-    $lastParentItemDeposit = 0;
-    $lastParentItemFxCostTotal = 0;
-    $lastParentItemTotal = 0;
-    $lastParentItemDiscountTotal = 0;
-    $lastChildrenList = array();
-
-    $depositItems = array();
-    $topupItems = array();
-    $depositGrandTotal = 0;
-    $fxCostGrandTotal = 0;
-
-    foreach($_memo->getItemsCollection() as $_item) {
-        if (
-            (strpos($_item->getSku(), 'deposit') !== false)
-            and ($_item->getOrderItem()->getParentItem())
-        ) {
-            // See assumption 1 above
-            if ($lastParentItem->getRowTotal()) {
-                $p = Mage::getModel('catalog/product')->load($_item->getProductId());
-                $_item->setRowTotal($p->getPrice() * $_item->getQty());
-            } else {
-                $lastParentItemTotal += $_item->getRowTotal();
-                $lastParentItemDiscountTotal += $_item->getDiscountAmount();
-            }
-            $lastParentItemDeposit += $_item->getRowTotal() - $_item->getDiscountAmount();
-            $depositGrandTotal += $_item->getRowTotal() - $_item->getDiscountAmount();
-            $depositItems[] = $_item;            
-            continue;
-        }
-
-        if ($_item->getOrderItem()->getParentItem()) {
-            $lastChildrenList[] = $_item;
-        } else {
-            if ($lastParentItem) {
-                $lastParentItem->setChildrenItems($lastChildrenList);
-                // the parent price is either null/0 or the whole price
-                $lastParentItem->setRowTotal(max(
-                    0,
-                    $lastParentItem->getRowTotal() - $lastParentItemDeposit
-                ));
-                $lastParentItem->setFxCostTotal($lastParentItemFxCostTotal);
-                $fxCostGrandTotal += $lastParentItemFxCostTotal;
-                $lastParentItem->setItemTotal($lastParentItemTotal - $lastParentItemDeposit);
-                $lastParentItem->setItemDiscountTotal($lastParentItemDiscountTotal);
-                $invoiceItems[] = $lastParentItem;
-            }
-            $lastParentItem = $_item;
-            $lastParentItemDeposit = 0;
-            $lastParentItemFxCostTotal = 0;
-            $lastParentItemTotal = 0;
-            $lastParentItemDiscountTotal = 0;
-            $lastChildrenList = array();
-        }
-
-        if ($_item->getOrderItem()->getTopupUseFxReserve()) {
-            $_quoteItem = Mage::getModel('sales/quote_item')->load($_item->getOrderItem()->getQuoteItemId());
-            if ($_quoteItem->getId()) {
-                $fxd = Mage::getModel('instasim_topupproduct/deposit')->load($_quoteItem->getTopupFxDeposit());
-            } else {
-                // TOTO: Eventually we should only use this case of the if block
-                $fxd = Mage::getModel('instasim_topupproduct/deposit')->load($_item->getOrderItem()->getTopupFxDeposit());
-            }
-
-            $fxr = Mage::getModel('instasim_topupproduct/fxreserve')->load($_item->getOrderItem()->getTopupFxReserve());
-            $topupFxCost = $_item->getOrderItem()->getTopupFxCost();
-
-            $_item->setUseFxr(1);
-            $_item->setFxr($fxr);
-            $_item->setFxd($fxd);
-            $_item->setTopupFxCost($topupFxCost);
-            $_item->setFxCost(round($_item->getQty() * $_item->getTopupFxCost() * $fxd->getExchangeRate(), 2));
-
-            if ($_item->getFxCost()) {
-                $topupItems[] = $_item;
-                $lastParentItemFxCostTotal += $_item->getFxCost();
-            }
-        }
-
-        $lastParentItemTotal += $_item->getRowTotal();
-        // See assumption 1
-        $lastParentItemDiscountTotal += $_item->getDiscountAmount();
+    $oldValue = 0;
+    $_order = $_memo->getOrder();
+    $this->setOrder($_order);
+    foreach ($_order->getInvoiceCollection() as $_inv) {
+        $_invoiceExt = $_instasim_helper->getAbstractInvoiceItemTree($_inv);
+        $oldValue += $_invoiceExt->getTaxableGrandTotalExclTax();
     }
-    if ($lastParentItem) {
-        $lastParentItem->setChildrenItems($lastChildrenList);
-        // the parent price is either null/0 or the whole price
-        $lastParentItem->setRowTotal(max(
-            0,
-            $lastParentItem->getRowTotal() - $lastParentItemDeposit
-        ));
-        $lastParentItem->setFxCostTotal($lastParentItemFxCostTotal);
-        $fxCostGrandTotal += $lastParentItemFxCostTotal;
-        $lastParentItem->setItemTotal($lastParentItemTotal - $lastParentItemDeposit);
-        $lastParentItem->setItemDiscountTotal($lastParentItemDiscountTotal);
-        $invoiceItems[] = $lastParentItem;
-    }
-    $taxableGrandTotalExclTax = round((0.07/1.07) * ($_memo->getGrandTotal() - $depositGrandTotal - $fxCostGrandTotal), 2);
-    $taxGrandTotal = $_memo->getGrandTotal() - $depositGrandTotal - $fxCostGrandTotal - $taxableGrandTotalExclTax;
+
+    $grandTotal = $_memo->getGrandTotal();
+    $tax = round((0.07/1.07) * $grandTotal, 2);
+    $grandTotalExclTax = $grandTotal - $tax;
     ?>
 
     <table class="no-border" style="margin-bottom: 1cm;">
@@ -310,10 +198,16 @@ $i = 0;
             </td>
             <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
                 <h1><?php echo $_helper->__('Credit Memo')?></h1><br />
-                <?php echo $_helper->__('Credit Memo Number: ') . $_memo->getIncrementId(); ?>
+                <?php echo $_helper->__('เลขที่ใบลดหนี้: ') . $_memo->getIncrementId(); ?>
                 <br />
-                <?php echo $_helper->__('Date: '); ?>
+                <?php echo $_helper->__('วันที่: '); ?>
                 <?php echo Mage::helper('core')->formatDate($_memo->getCreatedAt(), 'medium', false); ?>
+                <?php foreach ($_memo->getOrder()->getInvoiceCollection() as $_inv):?>
+                    <?php echo $_helper->__('อ้างถึงใบกำกับภาษีเลขที่: ') . $_inv->getIncrementId(); ?>
+                    <br />
+                    <?php echo $_helper->__('ลงวันที่: '); ?>
+                    <?php echo Mage::helper('core')->formatDate($_inv->getCreatedAt(), 'medium', false); ?>
+                <?php endforeach; ?>
             </td>
         </tr>
     </table>
@@ -372,42 +266,20 @@ $i = 0;
         </tr>
         </thead>
         <tbody>
-        <?php $grayRow = true; ?>
-        <?php /* @var $_item Mage_Sales_Model_Order_Creditmemo_Item */?>
-        <?php foreach($invoiceItems as $_item): ?>
-            <?php $grayRow = ! $grayRow; ?>
-            <tr class="<?php echo $grayRow ? 'gray' : ""; ?> parent-product">
-                <?php
-                $productOptions = $_item->getOrderItem()->getProductOptions();
-                ?>
-                <?php if(!empty($productOptions['attributes_info'])): ?>
-                    <td>
-                        <?php echo $_item->getName();?>
-                        <?php foreach($productOptions['attributes_info'] as $productOption):?>
-                            <br />
-                            <span class="product-options">
-                                <i><?php echo $productOption['label']?></i><br />
-                                &nbsp;&nbsp;&nbsp;&nbsp;<?php echo $productOption['value'];?>
-                            </span>
-                        <?php endforeach;?>
-                    </td>
-                <?php else: ?>
-                    <td><?php echo $_item->getName() ?></td>
-                <?php endif;?>
-
-                <td style="text-align: right;"><?php echo (int)$_item->getQty() ?></td>
-                <td style="text-align: right;"><?php echo Mage::helper('core')->currency(($_item->getItemTotal() - $_item->getFxCostTotal() - $_item->getItemDiscountTotal()) / $_item->getQty()); ?></td>
-                <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getItemTotal() - $_item->getFxCostTotal() - $_item->getItemDiscountTotal()); ?></td>
-            </tr>
-            <?php foreach($_item->getChildrenItems() as $_childItem): ?>
-                <tr class="<?php echo $grayRow ? 'gray' : ""; ?>">
-                <td style="padding-left: 1cm"><?php echo $_helper->getQtyString($_childItem->getQty()/$_item->getQty()). $_childItem->getName() ?></td>
-                    <td style="text-align: right;"></td>
-                    <td style="text-align: right;"></td>
-                    <td style="text-align: right;"></td>
-                </tr>
-            <?php endforeach; ?>
-        <?php endforeach; ?>
+        <tr>
+            <td>
+                <?php echo $_helper->__('ส่วนลดตามใบกำกับภาษี:'); ?>
+                <?php foreach ($_memo->getOrder()->getInvoiceCollection() as $_inv):?>
+                    <br/>&nbsp;&nbsp;
+                    <?php echo $_inv->getIncrementId(); ?>
+                    <?php echo $_helper->__(' ณ วันที่ '); ?>
+                    <?php echo Mage::helper('core')->formatDate($_inv->getCreatedAt(), 'medium', false); ?>
+                <?php endforeach; ?>
+            </td>
+            <td style="text-align: right;">1</td>
+            <td style="text-align: right;"><?php echo Mage::helper('core')->currency($grandTotal); ?></td>
+            <td style="text-align: right;"><?php echo Mage::helper('core')->currency($grandTotal); ?></td>
+        </tr>
         </tbody>
     </table>
     <br />
@@ -416,28 +288,28 @@ $i = 0;
         <tbody>
         <tr>
             <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Subtotal');?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_memo->getGrandTotal() - $_memo->getShippingInclTax() - $depositGrandTotal - $fxCostGrandTotal)?></td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('รวมมูลค่าสินค้าตามใบกำกับภาษีเดิม');?>:</td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($oldValue)?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Shipping & Handling')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_memo->getShippingInclTax())?></td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('รวมมูลค่าที่ถูกต้อง')?>:</td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($oldValue - $grandTotalExclTax)?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Grand Total')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_memo->getGrandTotal() - $depositGrandTotal - $fxCostGrandTotal)?></td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('ผลต่าง')?>:</td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($grandTotalExclTax)?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('Grand Total Excl. VAT')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($taxGrandTotal)?></td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('ภาษีมูลค่าเพิ่ม')?>:</td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($tax)?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
-            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('VAT')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($taxableGrandTotalExclTax)?></td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('ยอดรวม')?>:</td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($grandTotal); ?></td>
         </tr>
         </tbody>
     </table>
@@ -483,128 +355,6 @@ $i = 0;
         </tr>
         </tbody>
     </table>
-    <?php if ($topupItems): ?>
-    <?php /* BEGIN TOPUP RECEIPT {{{ */ ?>
-    <pagebreak />
-    <table class="no-border" style="margin-bottom: 1cm;">
-        <tr>
-            <td style="width: 18%; padding-left: 0.5cm; height: 3cm; overflow: hidden;">
-                <?php echo $svgLogo; ?>
-            </td>
-            <td style="width: 52%; height: 3cm; overflow: hidden;">
-                <?php 
-                    echo $this->getLayout()->createBlock('cms/block')->setBlockId('store_billing_contact')->toHtml(); 
-                ?>
-            </td>
-            <td style="width: 30%; height: 3cm; overflow: hidden; text-align: right; vertical-align: top;">
-                <h1><?php echo $_helper->__('Money Receipt')?></h1><br />
-                <?php echo $_helper->__('Date: '); ?>
-                <?php echo Mage::helper('core')->formatDate($_memo->getCreatedAt(), 'medium', false); ?>
-            </td>
-        </tr>
-    </table>
-
-    <table class="no-border addresses">
-        <tr>
-            <td style="text-align: right; width: 13%; height: 3cm; overflow: hidden;">
-                <div style="position: absolute; rotate: -90; left: 10%; text-align: center; font-size: 70%;">
-                    <?php echo $_helper->__('Order # ')?>
-                    <br />
-                    <barcode code="<?php echo $_memo->getOrder()->getIncrementId()?>" type="C128A" size="0.5" />
-                    <br />
-                    <?php echo $_memo->getOrder()->getIncrementId()?>
-                </div>
-            </td>
-            <?php if (! empty($_memo->getShippingAddress())): ?>
-                <td style="text-align: center; width: 5%; height: 3cm; overflow: hidden;">
-                    S<br />
-                    H<br />
-                    I<br />
-                    P<br />
-                     <br />
-                    T<br />
-                    O<br />
-                </td>
-                <td style="padding: 5pt; text-align: left; width: 52%; height: 3cm; overflow: hidden;">
-                    <p class="address-info"><?php echo $_memo->getShippingAddress()->format('html');?></p>
-                </td>
-                <?php $extra_billing_width = 0; ?>
-            <?php else: ?>
-                <?php $extra_billing_width = 57; ?>
-            <?php endif; ?>
-            <td style="text-align: center; width: 5%; height: 3cm; overflow: hidden;">
-                S<br />
-                O<br />
-                L<br />
-                D<br />
-                 <br />
-                T<br />
-                O<br />
-            </td>
-            <td style="padding: 5pt; text-align: left; width: <?php echo (25 + $extra_billing_width) ?>%; height: 3cm; overflow: hidden;">
-                <?php if (! empty($_memo->getBillingAddress())): ?>
-                    <p class="address-info"><?php echo $_memo->getBillingAddress()->format('html');?></p>
-                <?php endif; ?>
-            </td>
-        </tr>
-    </table>
-    <table class="products" cellpadding="0" cellspacing="0" style="margin-top: 1.5cm;">
-        <thead>
-        <tr>
-            <th><?php echo $_helper->__('Item'); ?></th>
-            <th><?php echo $_helper->__('Qty'); ?></th>
-            <th><?php echo $_helper->__('Amount per Unit'); ?></th>
-            <th><?php echo $_helper->__('Amount'); ?></th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php $grayRow = true; ?>
-        <?php /* @var $_item Mage_Sales_Model_Order_Creditmemo_Item */?>
-        <?php foreach($invoiceItems as $_item): ?>
-            <?php $grayRow = ! $grayRow; ?>
-            <?php if ($_item->getFxCost()): ?>
-                <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
-                    <td>
-                        <b><?php echo $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.4f %4$s/%5$s', $_item->getTopupFxCost(), $_item->getFxr()->getCurrencySymbol(), $_item->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_item->getFxr()->getCurrencySymbol()); ?></b>(*)
-                        <br />
-                        <small style="padding-left: 1cm;">&nbsp;&nbsp;**<?php echo $_helper->__(' for ') . $_item->getName() ?></small>
-                    </td>
-                    <td style="text-align: right;"><?php echo (int)$_item->getQty() ?></td>
-                    <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getFxCostTotal() / $_item->getQty()); ?></td>
-                    <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getFxCostTotal()); ?></td>
-                </tr>
-            <?php endif; ?>
-            <?php foreach($_item->getChildrenItems() as $_childItem): ?>
-                <?php if ($_childItem->getFxCost()): ?>
-                    <tr class="<?php echo $grayRow ? 'gray' : ""; ?>"><!-- The FX Cost -->
-                        <td>
-                            <?php echo $_helper->getQtyString($_childItem->getQty()/$_item->getQty()) . $_helper->__('Credit value of %1$.2f %2$s at the exchange rate %3$.4f %4$s/%5$s', $_childItem->getTopupFxCost(), $_childItem->getFxr()->getCurrencySymbol(), $_childItem->getFxd()->getExchangeRate(), Mage::app()->getStore()->getBaseCurrencyCode(), $_childItem->getFxr()->getCurrencySymbol()); ?>(*)
-                            <br />
-                            <small style="padding-left: 1cm;">&nbsp;&nbsp;**<?php echo $_helper->__(' for ') . $_item->getName() ?></small>
-                        </td>
-                        <td style="text-align: right;"><?php echo (int)$_childItem->getQty() ?></td>
-                        <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_childItem->getFxCost() / $_item->getQty()); ?></td>
-                        <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_childItem->getFxCost()); ?></td>
-                    </tr>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
-    <br />
-    <br /><br />
-    <table class="no-border totals" style="" cellpadding="0" cellspacing="0">
-        <tbody>
-        <tr>
-            <td style="width: 60%">&nbsp;</td>
-            <td style="text-align: right; width: 25%;"><?php echo $_helper->__('Grand Total')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($fxCostGrandTotal)?></td>
-        </tr>
-        </tbody>
-    </table>
-    * <?php echo $_helper->__("The exchange rate is based on the bank's rate on the date the company transacted the exchange and not necessarily the rate on the order date.") ?>
-    <?php /* }}} END TOPUP RECEIPT */ ?>
-    <?php endif; ?>
     <?php ++$i;?>
     <?php $this->stopEmulateEnvironment();?>
 <?php endforeach;?>
