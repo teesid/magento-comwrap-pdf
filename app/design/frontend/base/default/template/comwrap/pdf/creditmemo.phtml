@@ -175,6 +175,13 @@ $i = 0;
 
     $oldValue = 0;
     $_order = $_memo->getOrder();
+    $_comments = array();
+    // The collection is reverse sorted by creation time.
+    // We want to reverse that back!
+    foreach($_memo->getCommentsCollection() as $c) {
+        if (! $c->getIsVisibleOnFront()) continue;
+        array_unshift($_comments, $this->escapeHtml($c->getComment()));
+    }
     $this->setOrder($_order);
     foreach ($_order->getInvoiceCollection() as $_inv) {
         $_invoiceExt = $_instasim_helper->getAbstractInvoiceItemTree($_inv);
@@ -327,11 +334,7 @@ $i = 0;
                 <br/>
             </td>
             <td valign="top" style="width: 60%;"><?php echo $_helper->__('เหตุผลในการออกใบลดหนี้:');?><br/>
-                <?php foreach($_memo->getCommentsCollection() as $c) {
-                    if (! $c->getIsVisibleOnFront()) continue;
-                    echo $this->escapeHtml($c->getComment());
-                    echo "<br/>";
-                }?>
+                <?php echo implode("<br/>", $_comments); ?>
             </td>
             <td valign="bottom" style="text-align: center; width: 35%;">
                 <div class="collector-box">
