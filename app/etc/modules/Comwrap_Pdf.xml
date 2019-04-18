@@ -9,7 +9,7 @@
                 <ITwebexperts_Payperrentals />
                 <InstaSIM_TopupProduct />
             </depends>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
         </Comwrap_Pdf>
     </modules>
 </config>

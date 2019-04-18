@@ -70,6 +70,23 @@ $_helper = Mage::helper('comwrap_pdf');
 $_instasim_helper = Mage::helper('instasim_topupproduct');
 $_include_receipts = Mage::registry('instasim_include_receipts');
 
+function getShippingMethodText($shippingDescription) {
+    if (preg_match('/.*([Gg]rab|[Ll]ala[Mm]ove).*/', $shippingDescription))
+    {
+        return 'โดย/By: Messenger';
+    } else if (preg_match('/.*([K]erry|[Ss][Cc][Gg]).*/', $shippingDescription)) {
+        return 'โดย/By: Next-day';
+    } else if (preg_match('/.*(Sameday).*/', $shippingDescription)) {
+        return 'โดย/By: Same-day';
+    } else if (preg_match('/.*(pick-up|ด้วยตนเอง).*/', $shippingDescription)) {
+        return 'โดย/By: Pick-up';
+    } else if (preg_match('/.*(EMS).*/', $shippingDescription)) {
+        return 'โดย/By: EMS';
+    } else {
+        return $shippingDescription ? "โดย/By: $shippingDescription" : '';
+    }
+}
+
 $i = 0;
 ?>
 
@@ -224,6 +241,8 @@ $i = 0;
                 </td>
                 <td style="padding: 5pt; text-align: left; width: 52%; height: 3cm; overflow: hidden;">
                     <p class="address-info"><?php echo $_invoice->getShippingAddress()->format('html');?></p>
+                    <br />
+                    <small><?php echo getShippingMethodText($_invoice->getOrder()->getShippingDescription());?></small>
                 </td>
                 <?php $extra_billing_width = 0; ?>
             <?php else: ?>
