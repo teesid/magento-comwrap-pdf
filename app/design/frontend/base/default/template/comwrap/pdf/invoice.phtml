@@ -74,9 +74,9 @@ function getShippingMethodText($shippingDescription) {
     if (preg_match('/.*([Gg]rab|[Ll]ala[Mm]ove).*/', $shippingDescription))
     {
         return 'โดย/By: Messenger';
-    } else if (preg_match('/.*([K]erry|[Ss][Cc][Gg]).*/', $shippingDescription)) {
+    } else if (preg_match('/.*(2-3) (วันทำการ|working days).*/', $shippingDescription)) {
         return 'โดย/By: Next-day';
-    } else if (preg_match('/.*(Sameday).*/', $shippingDescription)) {
+    } else if (preg_match('/.*([Ss]ameday|by ?10[Pp][Mm]).*/', $shippingDescription)) {
         return 'โดย/By: Same-day';
     } else if (preg_match('/.*(pick-up|ด้วยตนเอง).*/', $shippingDescription)) {
         return 'โดย/By: Pick-up';
