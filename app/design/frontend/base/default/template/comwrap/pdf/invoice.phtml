@@ -69,6 +69,7 @@ EOSVG;
 $_helper = Mage::helper('comwrap_pdf');
 $_instasim_helper = Mage::helper('instasim_topupproduct');
 $_include_receipts = Mage::registry('instasim_include_receipts');
+$_include_deposit_receipts = FALSE;
 
 function getShippingMethodText($shippingDescription) {
     if (preg_match('/.*([Gg]rab|[Ll]ala[Mm]ove).*/', $shippingDescription))
@@ -326,7 +327,7 @@ $i = 0;
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('รวม / Subtotal');?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getGrandTotal() - $_invoiceExt->getShippingInclTax() - $_invoiceExt->getDepositGrandTotal() - $_invoiceExt->getFxCostGrandTotal())?></td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getGrandTotal() - $_invoiceExt->getShippingInclTax() - $_invoiceExt->getFxCostGrandTotal())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
@@ -336,7 +337,7 @@ $i = 0;
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('รวมทั้งหมด / Grand Total')?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getGrandTotal() - $_invoiceExt->getDepositGrandTotal() - $_invoiceExt->getFxCostGrandTotal())?></td>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getGrandTotal() - $_invoiceExt->getFxCostGrandTotal())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
@@ -530,7 +531,7 @@ $i = 0;
     * <?php echo $_helper->__("อ้างอิงจากอัตราแลกเปลี่ยนของธนาคาร ณ วันที่บริษัททำการแลกเปลี่ยนไว้แล้วและอาจไม่ตรงกับอัตราแลกเปลี่ยน ณ วันที่ทำการสั่งซื้อ <br/> Computed according to the bank's exchange rate at the time the company had made the exchange in advance, which may not be the same rate as that of the date of purchase.") ?>
     <?php /* }}} END TOPUP RECEIPT */ ?>
     <?php endif; ?>
-    <?php if ($_include_receipts && $_invoiceExt->getDepositItems()): ?>
+    <?php if ($_include_deposit_receipts && $_include_receipts && $_invoiceExt->getDepositItems()): ?>
     <?php /* BEGIN DEPOSIT RECEIPT {{{ */ ?>
     <pagebreak />
     <table class="no-border" style="margin-bottom: 1cm;">
