@@ -275,10 +275,11 @@ $i = 0;
     <table class="products" cellpadding="0" cellspacing="0" style="margin-top: 1.5cm;">
         <thead>
         <tr>
-            <th><?php echo $_helper->__('สินค้า / Product'); ?></th>
-            <th><?php echo $_helper->__('จำนวน / Qty'); ?></th>
-            <th><?php echo $_helper->__('ราคาต่อหน่วย / Unit Price'); ?></th>
-            <th><?php echo $_helper->__('ราคา / Price'); ?></th>
+            <th><?php echo $_helper->__('รายการ<br/>Item'); ?></th>
+            <th><?php echo $_helper->__('จำนวน<br/>Qty'); ?></th>
+            <th><?php echo $_helper->__('ราคาต่อหน่วย<br/>Unit Price'); ?></th>
+            <th><?php echo $_helper->__('ราคารวม<br/>Row Total'); ?></th>
+            <th><?php echo $_helper->__('ส่วนลด<br/>Discount'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -306,12 +307,14 @@ $i = 0;
                 <?php endif;?>
 
                 <td style="text-align: right;"><?php echo (int)$_item->getQty() ?></td>
-                <td style="text-align: right;"><?php echo Mage::helper('core')->currency(($_item->getItemTotal() - $_item->getFxCostTotal() - $_item->getItemDiscountTotal()) / $_item->getQty()); ?></td>
-                <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getItemTotal() - $_item->getFxCostTotal() - $_item->getItemDiscountTotal()); ?></td>
+                <td style="text-align: right;"><?php echo Mage::helper('core')->currency(($_item->getItemTotal() - $_item->getFxCostTotal()) / $_item->getQty()); ?></td>
+                <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getItemTotal() - $_item->getFxCostTotal()); ?></td>
+                <td style="text-align: right;"><?php echo Mage::helper('core')->currency($_item->getItemDiscountTotal()); ?></td>
             </tr>
             <?php foreach($_item->getChildrenItems() as $_childItem): ?>
                 <tr class="<?php echo $grayRow ? 'gray' : ""; ?>">
                 <td style="padding-left: 1cm"><?php echo $_helper->getQtyString($_childItem->getQty()/$_item->getQty()) . $_childItem->getName() ?></td>
+                    <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
@@ -327,12 +330,19 @@ $i = 0;
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('รวม / Subtotal');?>:</td>
-            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getGrandTotal() - $_invoiceExt->getShippingInclTax() - $_invoiceExt->getFxCostGrandTotal())?></td>
+            <?php /* Note that the discount amount is already negative */ ?>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getGrandTotal() - $_invoiceExt->getShippingInclTax() - $_invoiceExt->getFxCostGrandTotal() - $_invoiceExt->getDiscountAmount())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
             <td style="text-align: right; width: 65%;"><?php echo $_helper->__('การจัดการและขนส่งสินค้า / Shipment & Handling')?>:</td>
             <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getShippingInclTax())?></td>
+        </tr>
+        <tr>
+            <td style="width: 20%">&nbsp;</td>
+            <td style="text-align: right; width: 65%;"><?php echo $_helper->__('ส่วนลด / Discount');?>:</td>
+            <?php /* Note that the discount amount is already negative */ ?>
+            <td style="text-align: right; width: 15%;"><?php echo Mage::helper('core')->currency($_invoiceExt->getDiscountAmount())?></td>
         </tr>
         <tr>
             <td style="width: 20%">&nbsp;</td>
